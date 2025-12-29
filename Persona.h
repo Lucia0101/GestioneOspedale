@@ -1,31 +1,24 @@
 #ifndef __PERSONA_H__
 #define __PERSONA_H__
 #include <string>
-
 using namespace std;
 
 class Persona{
 	private:
 	protected:
-		string nome, cognome;
+		string nome;
+		string cognome;
 		int eta;
 	
 	public:
-		// costruttore specifico
-		Persona(string _nome, string _cognome, int _eta); 
+		Persona(string _nome,string _cognome,int _eta); 
+		virtual ~Persona(){};
+				
+		friend ostream& operator << (ostream& os,const Persona& p);
 		
-		// distruttore
-		virtual ~Persona();
-		
-		// stampa
-		virtual ostream& stampaoperator(ostream& os)const;
-		
-		friend ostream& operator << (ostream& os, const Persona& p);
-		
-		virtual void test()=0;//rende la classe virtuale (quindi non si può direttamente creare nel main una persona p, dà errore)
+		virtual void stampaInfo()const;
 
 };
 
-ostream& operator << (ostream& os, const Persona& p);
 
 #endif

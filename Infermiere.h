@@ -5,20 +5,17 @@
 
 using namespace std;
 
-class Infermiere:public Persona{ 
+class Infermiere: public Persona{ 
 	private:
-		string codID, reparto, turno;
+		string codID;
+		string reparto;
+		string turno;
 	
 	public:
-		Infermiere(string _nome, string _cognome, int _eta , string _codID, string _reparto, string _turno);
-		~Infermiere();
-		friend ostream& operator << (ostream& os, const Infermiere& i);
-		
-		ostream& stampaoperator(ostream& os)const;
-		void test(){}
+		Infermiere(string _nome,string _cognome,int _eta,string _codID,string _reparto,string _turno);
+		virtual ~Infermiere(){};
+
+		virtual void stampaInfo()const;
 };
-
-ostream& operator << (ostream& os, const Infermiere& i);
-
 
 #endif
