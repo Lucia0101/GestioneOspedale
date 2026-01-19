@@ -3,41 +3,90 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+
 using namespace std;
 
-Reparto::Reparto(){
-	nome="";
-	numMedici=0;
-	numInfermieri=0;
-	numLettiLiberi=0;
-	numLettiOccupati=0;
-	specializzazione="";
+Reparto::Reparto() {
+    nome = "";
+    numMedici = 0;
+    numInfermieri = 0;
+    numStanze = 10;
+    lettiPerStanza = 2;
+    specializzazione = "";
+    numLettiOccupati = 0;
+    numLettiLiberi = numStanze * lettiPerStanza;
+    
+    
+    for(int i = 1; i <= numStanze; i++) {
+        stanze.push_back(Stanza(i, lettiPerStanza, nome));
+    }
 }
 
-Reparto::Reparto(string n,int numM,int numInf,int LL,int LO,string spec):nome(move(n)),specializzazione(move(spec)){
-	numMedici=numM;
-	numInfermieri=numInf;
-	numLettiLiberi=LL;
-	numLettiOccupati=LO;
-	
-	for(int i=0;i<10;++i){
-		stanze.emplace_back(i,2,nome);
-	}
-	numLettiLiberi=10*2;
-	
+
+Reparto::Reparto(string n, int numM, int numInf, int numStanz, int letStanz, string spec)
+    : nome(move(n)), 
+      numMedici(numM), 
+      numInfermieri(numInf),
+      numStanze(numStanz),       
+      lettiPerStanza(letStanz),  
+      specializzazione(move(spec)) 
+{
+    numLettiOccupati = 0; 
+    numLettiLiberi = numStanz * letStanz; 
+    
+    for(int i = 1; i <= numStanz; i++) {
+        stanze.push_back(Stanza(i, letStanz, nome));
+    }
 }
 
-void Reparto::stampaInfo()const{
-	cout<<"Reparto: "<<nome<<" | Specializzazione: "<<specializzazione<<endl;
+
+bool Reparto::assegnaLetto(int& stanzaAssegnata) {
+    lock_guard<mutex> lock(mtx); 
+    for(auto& stanza : stanze) {
+        if(!stanza.isPiena()) {
+            stanza.occupaLetto(); 
+            stanzaAssegnata = stanza.getNumStanza();
+            
+            numLettiOccupati++;
+            if(numLettiLiberi > 0) numLettiLiberi--;
+            
+            return true; 
+        }
+    }
+    stanzaAssegnata = -1;
+    return false; 
 }
 
-void Reparto::stampaDettagli()const{
-	stampaInfo();
-	
-	cout<<"Medici: "<<numMedici<<" | Infermieri: "<<numInfermieri<<endl;
-	cout<<"Letti liberi: "<<numLettiLiberi<<" | Letti occupati: "<<numLettiOccupati<<endl;
-	
-	for(const auto& s:stanze){
-		cout<<" Stanza "<<s.getNumStanza()<<" | Letti: "<<s.getNumLetti()<<endl;
-	}
+void Reparto::liberaLetto(int numeroStanza) {
+    lock_guard<mutex> lock(mtx);
+    
+    for(auto& stanza : stanze) {
+        if(stanza.getNumStanza() == numeroStanza) {
+            stanza.liberaLetto();
+            
+            if(numLettiOccupati > 0) numLettiOccupati--;
+            numLettiLiberi++;
+            return;
+        }
+    }
+}
+
+void Reparto::svuotaLetti() {
+    lock_guard<mutex> lock(mtx);
+    numLettiOccupati = 0;
+    numLettiLiberi = numStanze * lettiPerStanza;
+    for(auto& stanza : stanze) {
+        stanza.azzeraLetti();
+    }
+}
+
+void Reparto::stampaDettagli() const {
+    lock_guard<mutex> lock(mtx);
+    cout << "REPARTO: " << nome << " (" << specializzazione << ")" << endl;
+    cout << "[Staff: " << numInfermieri << " Infermieri]" << endl;
+    cout << "[Letti Totali: " << numLettiLiberi + numLettiOccupati << " | Liberi: " << numLettiLiberi << "]" << endl;
+    
+    for(const auto& s : stanze) {
+        s.stampaDettagli();
+    }
 }
