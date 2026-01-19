@@ -20,9 +20,13 @@ class Operazione{
 	public:
 		Operazione();
 		Operazione(string d,string cf,string type,string es,string cu);
-		
+		string getData() const { return data; }
+		string getCFPaziente() const { return cf_paz; }
+		string getTipo() const { return tipo; }
 		void stampaInfo()const;
 		void aggiungiMedico(shared_ptr<Medico> m);
+		
+		string getCura() const { return cura; }
 		
 		~Operazione(){}
 	
