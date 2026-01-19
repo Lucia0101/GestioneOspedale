@@ -30,8 +30,10 @@ void Operazione::stampaInfo()const{
 
 void Operazione::aggiungiMedico(shared_ptr<Medico> m){
 	if(teamMedico.size()>=6) throw runtime_error("Team medico completo");
-    if(m->isOccupato()) throw runtime_error("Medico occupato");
+    if(m->isOccupato(this->data)) {
+        throw runtime_error("Il medico " + m->getCognome() + " e' gia' impegnato il giorno " + this->data);
+    }
     
     teamMedico.push_back(m);
-    m->setOccupato(true);
+    m->aggiungiImpegno(this->data);
 }
