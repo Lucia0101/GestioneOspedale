@@ -11,6 +11,8 @@
 #include "Infermiere.h"
 #include "Paziente.h"
 using namespace std;
+ 
+int dataToIn(string data);
 
 class Ospedale{
 	private:
@@ -23,33 +25,25 @@ class Ospedale{
 	    vector<Infermiere*> infermieri;
 	    list<Paziente*> pazienti; 
 	    
-	    /*vector<shared_ptr<Medico>> medici;
-		vector<shared_ptr<Infermiere>> infermieri;
-		list<shared_ptr<Paziente>> pazienti;*/
-
-			    
-	   	
 	public:
 		Ospedale();
 	    Ospedale(string n);
 	
 		void aggiungiMedico(Medico* m){medici.push_back(m);}
-		void aggiungiInfermiere(Infermiere* i){infermieri.push_back(i);}
+		void aggiungiInfermiere(Infermiere* i);
 		void aggiungiPaziente(Paziente* p){pazienti.push_back(p);}
-		
-		/*void aggiungiMedico(shared_ptr<Medico> m){ medici.push_back(m); }
-		void aggiungiInfermiere(shared_ptr<Infermiere> i){ infermieri.push_back(i); }
-		void aggiungiPaziente(shared_ptr<Paziente> p){ pazienti.push_back(p); }*/
-
-		
+	
 	    void aggiungiReparto(shared_ptr<Reparto> r);
 	    void aggiungiOperazione(const Operazione& op);
+	    
+	    shared_ptr<Reparto> getReparto(string nomeReparto);
 	    
 	    void stampaDati()const;
 	    void stampaReparti()const;
 	    void stampaOperazioni()const;
 	    void stampaPersonale();
-	    void stampaPazienti();
+	   
+	    void stampaPazientiFiltrati() const; 
 	    
 	    
 	    ~Ospedale();
