@@ -7,6 +7,7 @@ class Stanza{
 	private:
 		int numStanza;
 		int numLetti;
+		int lettiOccupati;
 		string reparto;
 		
 	public:
@@ -14,7 +15,15 @@ class Stanza{
 		Stanza(int stanza,int letti,string rep);
 		
 		int getNumStanza()const{return numStanza;}
-		int getNumLetti()const{return numLetti;}
+		
+		bool isPiena() const{return lettiOccupati >= numLetti;};
+		bool isVuota() const{return lettiOccupati == 0;};
+		
+		void occupaLetto(); //incrementa letti occupati
+		void liberaLetto(); //decrementa letti occupato
+		void azzeraLetti() { lettiOccupati = 0; }
+		
+		void stampaDettagli() const; 
 				
 		~Stanza(){}
 };
