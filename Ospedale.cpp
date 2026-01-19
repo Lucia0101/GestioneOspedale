@@ -7,18 +7,17 @@ using namespace std;
 Ospedale::Ospedale():nome(""){}
 
 Ospedale::Ospedale(string n):nome(move(n)){	
-	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,20,0,"Posizionamento pacemaker"));
-	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,20,0,"Posizionamento valvola cardiaca"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,20,0,"Facciale"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,20,0,"Rnoplastica"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,20,0,"Mastoplastica riduttiva"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,20,0,"Mastoplastica additiva"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,20,0,"Ginocchio"));
-	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,20,0,"Anca"));
-	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,20,0,"Braccio rotto"));
-	aggiungiReparto(make_shared<Reparto>("Pediatria",6,10,20,0,"Cura bambini"));
-	aggiungiReparto(make_shared<Reparto>("Geriatria",6,10,20,0,"Cura anziani"));
-	
+	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,10,2,"Posizionamento pacemaker e Posizionamento valvola cardiaca"));
+//	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,10,2,"Posizionamento valvola cardiaca"));
+	aggiungiReparto(make_shared<Reparto>("Chirurgia Estetica",6,10,10,2,"Facciale, Rnoplastica, Mastoplastica riduttiva e additiva"));
+//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Rnoplastica"));
+//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Mastoplastica riduttiva"));
+//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Mastoplastica additiva"));
+	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Ginocchio, Anca e Braccio rotto"));
+//	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Anca"));
+//	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Braccio rotto"));
+	aggiungiReparto(make_shared<Reparto>("Pediatria",6,10,10,2,"Cura bambini"));
+	aggiungiReparto(make_shared<Reparto>("Geriatria",6,10,10,2,"Cura anziani"));
 }
 
 
@@ -40,6 +39,13 @@ void Ospedale::stampaDati()const{
     cout<<"OPERAZIONI REGISTRATE: "<<registroOperazioni.size()<<endl;
 }
 
+shared_ptr<Reparto> Ospedale::getReparto(string nomeReparto) {
+    if (reparti.count(nomeReparto) > 0 && !reparti[nomeReparto].empty()) {
+        return reparti[nomeReparto][0]; 
+    }
+    throw runtime_error("Il reparto '" + nomeReparto + "' non esiste in questo ospedale!");
+}
+
 void Ospedale::stampaOperazioni()const{
 	cout<<"OPERAZIONI REGISTRATE: "<<endl;
 	for(const auto& o :registroOperazioni){
@@ -54,7 +60,6 @@ void Ospedale::stampaReparti() const {
         const string& nome=it->first;
         const vector<shared_ptr<Reparto>>& listaReparti=it->second;
 
-        //stampo tutti i reparti con lo stesso nome
         for(size_t i=0;i<listaReparti.size();++i) {
             listaReparti[i]->stampaDettagli();
             cout<<endl;
@@ -80,22 +85,74 @@ void Ospedale::stampaPersonale(){
     }
 }
 
-void Ospedale::stampaPazienti(){
-    cout<<"PAZIENTI RICOVERATI"<<endl;
+//(formato AAAAMMGG)
+int dataToIn(string data) {
+    if (data == "" || data == "---" || data.length() < 10) return 0;
+    int gg = stoi(data.substr(0, 2));
+    int mm = stoi(data.substr(3, 2));
+    int aaaa = stoi(data.substr(6, 4));
+    return aaaa * 10000 + mm * 100 + gg;
+}
+
+void Ospedale::stampaPazientiFiltrati() const{
+    string oggiStr = getDataAttuale(); // Prende la data di oggi: GG/MM/AAAA
+    int oggi = dataToIn(oggiStr);     // Diventa AAAAMMGG
     
-    if(pazienti.empty()){
-        cout<<"Nessun paziente ricoverato"<<endl;
-        return;
-    }
-    
-    for(const auto& paziente : pazienti) {
-        if(paziente){
-            cout<<*paziente<<endl;
+    for (auto const& element : reparti) {
+        for (auto& r : element.second) {
+            r->svuotaLetti();
         }
     }
     
-}
+    
+	cout << endl;
+    cout << "========== (Oggi: " << oggiStr << ") ==========" << endl;
+    cout << endl;
 
+    // 1. DA RICOVERARE
+    cout << "PAZIENTI PRENOTATI" << endl;
+    for (auto p : pazienti) {
+        if (dataToIn(p->getDataRicovero()) > oggi) {
+            p->stampaInfo();
+        }
+    }
+    // 2. ATTUALMENTE RICOVERATI
+    cout << endl;
+    cout << "PAZIENTI RICOVERATI" << endl;
+    for (auto p : pazienti) {
+        int dRic = dataToIn(p->getDataRicovero());
+        int dDim = dataToIn(p->getDataDimissioni());
+        
+        // Se oggi entra il paziente
+        if (dRic <= oggi && dRic != 0 && (dDim > oggi || dDim == 0 || p->getDataDimissioni() == "---")) {
+            auto rep = const_cast<Ospedale*>(this)->getReparto(p->getReparto());
+            if(rep) {
+                int stanzaTemporanea;
+                rep->assegnaLetto(stanzaTemporanea); 
+            }
+            p->stampaInfo();
+        }
+    }
+
+    // 3. DIMESSI 
+    cout << endl;
+    cout << "PAZIENTI DIMESSI" << endl;
+    for (auto p : pazienti) {
+        if (dataToIn(p->getDataDimissioni()) <= oggi && dataToIn(p->getDataDimissioni()) != 0) {
+            string infoOp = "Nessuna operazione registrata";
+            for(const auto& op : registroOperazioni) {
+                // Confrontiamo i Codici Fiscali
+                // Nota: Assicurati che Operazione abbia getCFPaziente() 
+                // e Paziente abbia getCF() (o accedi a p->getCF())
+                if(op.getCFPaziente() == p->getCF()) {
+                    infoOp = "Intervento: " + op.getTipo() + " (Data op: " + op.getData() + ")";
+                    break;
+                }
+            }
+            p->stampaPerDimessi(infoOp);
+        }
+    }
+}
 Ospedale::~Ospedale(){
     for(auto medico : medici) delete medico;
     for(auto infermiere : infermieri) delete infermiere;
