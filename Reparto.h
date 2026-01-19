@@ -5,7 +5,6 @@
 #include <vector>
 #include <algorithm>
 #include <mutex>
-
 #include "Stanza.h"
 using namespace std;
 
@@ -14,36 +13,28 @@ class Reparto{
 		string nome;
 		int numMedici;
 		int numInfermieri;
-		int numLettiLiberi;
-		int numLettiOccupati;
+		int numStanze;
+		int lettiPerStanza;
 		string specializzazione;
-		
-		//composizione: reparto possiede le stanze
+		int numLettiLiberi;
+		int numLettiOccupati; 
 		vector<Stanza> stanze;
-		mutable mutex mtx;
+		int contaInfermieri; 
+		mutable mutex mtx; 
+		
 		
 	public:
 		Reparto();
-		Reparto(string n,int numM,int numInf,int LL,int LO,string spec);
+		Reparto(string n, int numM, int numInf, int numStanz, int letStanz, string spec);
 		
-		void stampaInfo()const;
-		void stampaDettagli()const;
+		string getNome() const { return nome; }
 		
-		bool occupaLetto(){
-        	lock_guard<mutex>lock(mtx);
-        	if(numLettiLiberi>0) {
-          	  	numLettiLiberi--;
-           		numLettiOccupati++;
-           	 	return true;
-        	}
-        	return false;
-    	}
-    	
-    	string getNome()const{return nome;}
+		bool assegnaLetto(int& stanzaAssegnata);
+		void liberaLetto(int numeroStanza);
+		void svuotaLetti();
+		void stampaDettagli() const; 
 		
 		~Reparto(){}
-		
 };
-
 
 #endif
