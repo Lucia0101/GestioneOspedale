@@ -15,9 +15,10 @@ class Persona{
 		virtual ~Persona(){};
 				
 		friend ostream& operator << (ostream& os,const Persona& p);
+		string getNome() const { return nome; }
+        string getCognome() const { return cognome; }
 		
 		virtual void stampaInfo()const;
-
 };
 
 
