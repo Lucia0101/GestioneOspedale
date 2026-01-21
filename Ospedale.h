@@ -1,9 +1,11 @@
 #ifndef __OSPEDALE_H__
 #define __OSPEDALE_H__
+
 #include <string>
 #include <vector>
 #include <map>
 #include <list>
+
 
 #include "Reparto.h"
 #include "Operazione.h"
@@ -25,13 +27,20 @@ class Ospedale{
 	    vector<Infermiere*> infermieri;
 	    list<Paziente*> pazienti; 
 	    
+	  
+	    
 	public:
 		Ospedale();
 	    Ospedale(string n);
 	
 		void aggiungiMedico(Medico* m){medici.push_back(m);}
-		void aggiungiInfermiere(Infermiere* i);
+		void aggiungiInfermiere(Infermiere* i){infermieri.push_back(i);}
 		void aggiungiPaziente(Paziente* p){pazienti.push_back(p);}
+		
+		void statistichePazienti(); 
+		vector<Medico*> getMedici() const { return medici;  } 
+		vector<Infermiere* > getInfermieri()const {return infermieri;} 
+		list<Paziente* > getPazienti()const {return pazienti;}
 	
 	    void aggiungiReparto(shared_ptr<Reparto> r);
 	    void aggiungiOperazione(const Operazione& op);
@@ -41,7 +50,11 @@ class Ospedale{
 	    void stampaDati()const;
 	    void stampaReparti()const;
 	    void stampaOperazioni()const;
-	    void stampaPersonale();
+	    void stampaMediciOrdinati(); 
+	    void stampaInfermieriOrdinati();
+	    void stampaPazientiOrdinati();
+	    
+	    Paziente& findCFpaziente(const string& cf);
 	   
 	    void stampaPazientiFiltrati() const; 
 	    

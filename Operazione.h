@@ -1,5 +1,6 @@
 #ifndef __OPERAZIONE_H__
 #define __OPERAZIONE_H__
+
 #include <string>
 #include <vector>
 #include <memory>

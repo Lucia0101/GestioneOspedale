@@ -1,13 +1,14 @@
 #ifndef __PAZIENTE_H__
 #define __PAZIENTE_H__
+
 #include <string>
-#include <iostream>
+#include <list>
 
 #include "Persona.h"
-#include "Ospedale.h"
 using namespace std;
 
 class Reparto;
+class Ospedale; 
 
 string getDataAttuale();
 
@@ -20,7 +21,7 @@ class Paziente: public Persona{
 	
 	public:
 		Paziente(string _nome,string _cognome,int _eta,string _cf,string _allergie,string _reparto,string dataRicovero,string _dataDimissioni,int _numStanza);
-		virtual ~Paziente(); //ho modificato le {}, bisogna eliminare la Lista di Farmaci
+		virtual ~Paziente();
 		
 		virtual void stampaInfo()const;
 		
@@ -35,11 +36,20 @@ class Paziente: public Persona{
 		int getNumStanza() const { return numStanza; }
 		string getDataRicovero() const { return dataRicovero; }
 		string getDataDimissioni() const { return dataDimissioni; }
-		
 		string getCF() const { return cf; }
+		string getAllergie()const{return allergie;}
+		
 		void stampaPerDimessi(string infoOperazione) const;
 	
+		static void ordinaPerCognome(list<Paziente*>& pazienti);
 		
+		//INTERAZIONE UTENTE
+		void setNome(const string& nuovoNome) { nome = nuovoNome; }
+	    void setCognome(const string& nuovoCognome) { cognome = nuovoCognome; }
+	    void setEta(int nuovaEta) { eta = nuovaEta; }
+	    void setAllergie(const string& nuoveAllergie) { allergie = nuoveAllergie; }
+	    void setStanza(int nuovaStanza) { numStanza = nuovaStanza; }
+	   
 };
 
 #endif

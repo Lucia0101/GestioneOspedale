@@ -1,9 +1,11 @@
 #include "Reparto.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
-
+#include <thread>
+#include <chrono> //per sleep
 using namespace std;
 
 Reparto::Reparto() {
@@ -84,7 +86,7 @@ void Reparto::stampaDettagli() const {
     lock_guard<mutex> lock(mtx);
     cout << "REPARTO: " << nome << " (" << specializzazione << ")" << endl;
     cout << "[Staff: " << numInfermieri << " Infermieri]" << endl;
-    cout << "[Letti Totali: " << numLettiLiberi + numLettiOccupati << " | Liberi: " << numLettiLiberi << "]" << endl;
+    cout << "[Letti totali: " << numLettiLiberi + numLettiOccupati << " | Liberi: " << numLettiLiberi << "]" << endl;
     
     for(const auto& s : stanze) {
         s.stampaDettagli();

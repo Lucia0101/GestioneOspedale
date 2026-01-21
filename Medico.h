@@ -1,15 +1,13 @@
 #ifndef __MEDICO_H__
 #define __MEDICO_H__
 #include <string>
-#include <atomic>
-#include<vector>
+#include <vector>
 
 #include "Persona.h"
+using namespace std;
 
 class Paziente;
 class Operazione;
-
-using namespace std;
 
 class Medico: public Persona{ 
 	private:
@@ -22,12 +20,13 @@ class Medico: public Persona{
 		virtual ~Medico(){};
 		
 		bool isOccupato(string data) const;
-		
 		void aggiungiImpegno(string data);
+		void completaOperazione(Paziente* p, Operazione& op, initializer_list<string> farmaciSupporto = {});
+		
+		static void ordinaPerCognome(vector<Medico* >& medici);
 		
 		virtual void stampaInfo() const;
 		
-		void completaOperazione(Paziente* p, Operazione& op, vector<string> farmaciSupporto);
 };
 
 #endif

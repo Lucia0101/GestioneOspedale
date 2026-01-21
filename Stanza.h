@@ -1,5 +1,6 @@
 #ifndef __STANZA_H__
 #define __STANZA_H__
+
 #include <string>
 using namespace std;
 

@@ -1,11 +1,14 @@
 #ifndef __REPARTO_H__
 #define __REPARTO_H__
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <mutex>
+
 #include "Stanza.h"
+#include "Paziente.h"
 using namespace std;
 
 class Reparto{
@@ -20,8 +23,7 @@ class Reparto{
 		int numLettiOccupati; 
 		vector<Stanza> stanze;
 		int contaInfermieri; 
-		mutable mutex mtx; 
-		
+		mutable mutex mtx; 		
 		
 	public:
 		Reparto();

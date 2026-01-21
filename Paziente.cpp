@@ -1,10 +1,12 @@
 #include "Paziente.h"
+#include "Reparto.h"
+#include "Ospedale.h"
+
 #include <iostream>
 #include <utility> //per far funzionare std::move
 #include <ctime>   // Per time() e localtime()
 #include <iomanip> // Per setfill e setw
 #include <sstream> // Per stringstream
-#include "Reparto.h"
 using namespace std;
 
 string getDataAttuale() {
@@ -29,7 +31,7 @@ Persona(_nome,_cognome,_eta){
 	listaFarmaci = nullptr;
 }
 
-Paziente::Paziente(const Paziente& paz):Persona(paz){
+Paziente::Paziente(const Paziente& paz):Persona(paz){ //costruttore di copia
 	cf = paz.cf;
 	allergie = paz.allergie;
 	reparto = paz.reparto;
@@ -90,23 +92,23 @@ void Paziente::stampaInfo()const{
         cout << "OGGETTO NON VALIDO: Questo Paziente e' stato spostato altrove." << endl;
         return;
     }
-	cout<<"PAZIENTE: "<<nome<<" "<<cognome 
-         <<", CF: ["<<cf<<"], "<<eta<<" anni" 
-         <<", ricoverato in "<<reparto 
-         <<" dal "<<dataRicovero<<" al "<<dataDimissioni;
-         if (numStanza == -1) {
-        cout << ", Stanza non ancora assegnata";
-    	} else {
-        	cout << ", stanza " << numStanza;
-    	}
-        cout <<", allergie: "<<allergie;
+	cout<<"PAZIENTE: "<<cognome<<" "<<nome<<", CF: ["<<cf<<"], "<<eta<<" anni"<<endl;
+    cout<<"Data ricovero: dal  "<<dataRicovero<<" al "<<dataDimissioni<<endl;
+    cout<<"Reparto: "<<reparto<<endl;
+    
+    if(numStanza!=-1){
+    	cout<<"Stanza: "<<numStanza<<endl;
+	}
+	
+	cout<<"Allergie: "<<allergie<<endl;
     
     if (numFarmaci > 0 && listaFarmaci != nullptr) {
-    	cout << endl;
-        cout << "--> Terapie prescritte: ";
-        for(int i=0; i<numFarmaci; i++) cout << listaFarmaci[i] << " ";
-        cout << endl;
-    }
+        cout << "Terapie prescritte: ";
+        for(int i=0; i<numFarmaci; i++){
+        	cout<<listaFarmaci[i]<<", ";
+		}
+   	}
+   	cout<<endl;
 }
 
 void Paziente::ricovera(Reparto& rep) {
@@ -119,8 +121,7 @@ void Paziente::ricovera(Reparto& rep) {
         int stanzaAssegnata = -1;
         if (rep.assegnaLetto(stanzaAssegnata)) {
             this->numStanza = stanzaAssegnata;
-            this->reparto = rep.getNome();
-            
+            this->reparto = rep.getNome(); 
         }
     } else {
         // Se è una prenotazione futura, non occupiamo il letto
@@ -138,9 +139,13 @@ void Paziente::dimetti(Reparto& rep) {
 }
 
 void Paziente::stampaPerDimessi(string infoOperazione) const {
-    cout << "PAZIENTE: " << nome << " " << cognome 
-         << ", CF: " << cf << endl;
-    cout << "   -> Ricovero: " << dataRicovero 
-         << " | Dimissione: " << dataDimissioni << endl;
-    cout << "   -> " << infoOperazione << endl;
+    cout << "PAZIENTE: " <<cognome<< " " <<nome<< ", CF: " << cf << endl;
+    cout << "Ricovero: " <<dataRicovero << " | Dimissione: " << dataDimissioni << endl;
+    cout << "" << infoOperazione << endl;
+}
+
+void Paziente::ordinaPerCognome(list<Paziente*>& pazienti) {
+    pazienti.sort([](Paziente* a, Paziente* b) {
+        return a->getCognome() < b->getCognome();
+    });
 }

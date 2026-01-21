@@ -1,21 +1,21 @@
 #include "Ospedale.h"
+#include "Persona.h"
+#include "Stampa.h"
+
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <mutex>
+#include <thread>
+#include <atomic>
 using namespace std;
 
 Ospedale::Ospedale():nome(""){}
 
 Ospedale::Ospedale(string n):nome(move(n)){	
 	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,10,2,"Posizionamento pacemaker e Posizionamento valvola cardiaca"));
-//	aggiungiReparto(make_shared<Reparto>("Cardiochirurgia",6,10,10,2,"Posizionamento valvola cardiaca"));
-	aggiungiReparto(make_shared<Reparto>("Chirurgia Estetica",6,10,10,2,"Facciale, Rnoplastica, Mastoplastica riduttiva e additiva"));
-//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Rnoplastica"));
-//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Mastoplastica riduttiva"));
-//	aggiungiReparto(make_shared<Reparto>("Chirurgia estetica",6,10,10,2,"Mastoplastica additiva"));
+	aggiungiReparto(make_shared<Reparto>("Chirurgia Estetica",6,10,10,2,"Facciale, Rinoplastica, Mastoplastica riduttiva e additiva"));
 	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Ginocchio, Anca e Braccio rotto"));
-//	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Anca"));
-//	aggiungiReparto(make_shared<Reparto>("Ortopedia",6,10,10,2,"Braccio rotto"));
 	aggiungiReparto(make_shared<Reparto>("Pediatria",6,10,10,2,"Cura bambini"));
 	aggiungiReparto(make_shared<Reparto>("Geriatria",6,10,10,2,"Cura anziani"));
 }
@@ -31,7 +31,7 @@ void Ospedale::aggiungiReparto(shared_ptr<Reparto> r){
 
 
 void Ospedale::stampaDati()const{
-	cout<<"OSPEDALE: "<<nome<<endl;
+	cout<<"OSPEDALE: "<<nome<<endl<<endl;
 	cout<<"PAZIENTI TOTALI: "<<pazienti.size()<<endl;
     cout<<"MEDICI: "<<medici.size()<<endl;
     cout<<"INFERMIERI: "<<infermieri.size()<<endl;
@@ -47,7 +47,7 @@ shared_ptr<Reparto> Ospedale::getReparto(string nomeReparto) {
 }
 
 void Ospedale::stampaOperazioni()const{
-	cout<<"OPERAZIONI REGISTRATE: "<<endl;
+	cout<<"======== OPERAZIONI REGISTRATE ========"<<endl;
 	for(const auto& o :registroOperazioni){
         o.stampaInfo();
         cout<<endl;
@@ -55,7 +55,7 @@ void Ospedale::stampaOperazioni()const{
 }
 
 void Ospedale::stampaReparti() const {
-	cout<<"REPARTI DELL'OSPEDALE"<<endl;
+	cout<<"======== REPARTI DELL'OSPEDALE ========"<<endl;
     for (auto it=reparti.begin();it!=reparti.end();++it) {
         const string& nome=it->first;
         const vector<shared_ptr<Reparto>>& listaReparti=it->second;
@@ -67,22 +67,38 @@ void Ospedale::stampaReparti() const {
     }
 }
 
-void Ospedale::stampaPersonale(){
-	cout<<endl;
-	cout<<"PERSONALE MEDICO"<<endl;
-    for(const auto& medico : medici){
-        if(medico){
-            cout<<*medico<<endl;
-        }
-    }
-    cout<<endl;
+void Ospedale::stampaMediciOrdinati(){
+/*	vector<Medico* > mediciOrdinati=getMedici();
+	Medico::ordinaPerCognome(mediciOrdinati);
+	
+	for(const auto& medico: mediciOrdinati){
+		cout<<"- ";
+		medico->stampaInfo();
+		cout<<endl;
+	}*/
+	stampaPerCognome(medici, "======== MEDICI (ordinati per cognome) ========");
+}
+
+void Ospedale::stampaInfermieriOrdinati(){
+/*	vector<Infermiere* > infermieriOrdinati=getInfermieri();
+	Infermiere::ordinaPerCognome(infermieriOrdinati);
+	
+	for(const auto& infermieri: infermieriOrdinati){
+		infermieri->stampaInfo();
+		cout<<endl;
+	}*/
+	stampaPerCognome(infermieri, "======== INFERMIERI (ordinati per cognome) ========");
+}
+
+void Ospedale::stampaPazientiOrdinati(){
+/*	list<Paziente*> pazientiOrdinati = pazienti; // Copia
+    Paziente::ordinaPerCognome(pazientiOrdinati);
     
-    cout<<"PERSONALE INFERMIERISTICO"<<endl;
-    for(const auto& infermiere : infermieri) {
-        if(infermiere){
-            cout<<*infermiere<<endl;
-        }
-    }
+    for(const auto& paziente : pazientiOrdinati) {
+        paziente->stampaInfo();
+        cout << endl;
+    }*/
+    stampaPerCognome(pazienti, "======== PAZIENTI (ordinati per cognome) ========");
 }
 
 //(formato AAAAMMGG)
@@ -109,50 +125,85 @@ void Ospedale::stampaPazientiFiltrati() const{
     cout << "========== (Oggi: " << oggiStr << ") ==========" << endl;
     cout << endl;
 
-    // 1. DA RICOVERARE
-    cout << "PAZIENTI PRENOTATI" << endl;
+    //DA RICOVERARE
+    cout << "*PAZIENTI CON PRENOTAZIONE*" << endl;
     for (auto p : pazienti) {
         if (dataToIn(p->getDataRicovero()) > oggi) {
             p->stampaInfo();
+            cout<<endl;
         }
     }
-    // 2. ATTUALMENTE RICOVERATI
+    
+    //ATTUALMENTE RICOVERATI
     cout << endl;
-    cout << "PAZIENTI RICOVERATI" << endl;
+    cout << "*PAZIENTI RICOVERATI*" << endl;
     for (auto p : pazienti) {
         int dRic = dataToIn(p->getDataRicovero());
         int dDim = dataToIn(p->getDataDimissioni());
         
         // Se oggi entra il paziente
         if (dRic <= oggi && dRic != 0 && (dDim > oggi || dDim == 0 || p->getDataDimissioni() == "---")) {
-            auto rep = const_cast<Ospedale*>(this)->getReparto(p->getReparto());
-            if(rep) {
-                int stanzaTemporanea;
-                rep->assegnaLetto(stanzaTemporanea); 
+        auto rep = const_cast<Ospedale*>(this)->getReparto(p->getReparto());
+        if(rep) {
+            int stanzaAssegnata;
+            if (rep->assegnaLetto(stanzaAssegnata)) {
+                p->setStanza(stanzaAssegnata); 
             }
-            p->stampaInfo();
+        }
+        p->stampaInfo();
+        cout<<endl;
         }
     }
 
-    // 3. DIMESSI 
+    //DIMESSI 
     cout << endl;
-    cout << "PAZIENTI DIMESSI" << endl;
+    cout << "*PAZIENTI DIMESSI*" << endl;
     for (auto p : pazienti) {
         if (dataToIn(p->getDataDimissioni()) <= oggi && dataToIn(p->getDataDimissioni()) != 0) {
             string infoOp = "Nessuna operazione registrata";
             for(const auto& op : registroOperazioni) {
                 // Confrontiamo i Codici Fiscali
-                // Nota: Assicurati che Operazione abbia getCFPaziente() 
-                // e Paziente abbia getCF() (o accedi a p->getCF())
                 if(op.getCFPaziente() == p->getCF()) {
                     infoOp = "Intervento: " + op.getTipo() + " (Data op: " + op.getData() + ")";
                     break;
                 }
             }
             p->stampaPerDimessi(infoOp);
+            cout<<endl;
         }
     }
 }
+
+void Ospedale::statistichePazienti(){
+	int etaMedia=0;
+	int conteggio=pazienti.size();
+	
+	if(conteggio>0){
+		auto sommaEta = accumulate(pazienti.begin(), pazienti.end(), 0,
+            [](int somma, Paziente* p) {
+                return somma + p->getEta(); 
+            });
+		
+		etaMedia=sommaEta/conteggio;
+		cout<<"Eta' media pazienti "<<etaMedia<<" anni"<<endl;
+	}
+}
+
+Paziente& Ospedale::findCFpaziente(const string& cf){
+	auto it = find_if(pazienti.begin(), pazienti.end(),
+        [&cf](Paziente* p) {
+            return p->getCF() == cf;
+        });
+    
+    if(it == pazienti.end()) {
+        throw runtime_error("Paziente con CF '" + cf + "' non trovato!");
+    }
+    
+    return **it; //dereferenzia due volte: iteratore, puntatore, riferimetno
+}
+
+
+
 Ospedale::~Ospedale(){
     for(auto medico : medici) delete medico;
     for(auto infermiere : infermieri) delete infermiere;

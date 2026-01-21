@@ -1,4 +1,5 @@
 #include "Stanza.h"
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -12,7 +13,7 @@ void Stanza::occupaLetto(){
 }
 
 void Stanza::liberaLetto(){
-if(!isVuota()) lettiOccupati--;
+	if(!isVuota()) lettiOccupati--;
 }
 
 void Stanza::stampaDettagli() const{
