@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <thread>
-#include <chrono> //per sleep
+#include <chrono>
 using namespace std;
 
 Reparto::Reparto() {
@@ -17,8 +17,6 @@ Reparto::Reparto() {
     specializzazione = "";
     numLettiOccupati = 0;
     numLettiLiberi = numStanze * lettiPerStanza;
-    
-    
     for(int i = 1; i <= numStanze; i++) {
         stanze.push_back(Stanza(i, lettiPerStanza, nome));
     }
@@ -35,7 +33,6 @@ Reparto::Reparto(string n, int numM, int numInf, int numStanz, int letStanz, str
 {
     numLettiOccupati = 0; 
     numLettiLiberi = numStanz * letStanz; 
-    
     for(int i = 1; i <= numStanz; i++) {
         stanze.push_back(Stanza(i, letStanz, nome));
     }
@@ -59,6 +56,7 @@ bool Reparto::assegnaLetto(int& stanzaAssegnata) {
     return false; 
 }
 
+
 void Reparto::liberaLetto(int numeroStanza) {
     lock_guard<mutex> lock(mtx);
     
@@ -73,6 +71,7 @@ void Reparto::liberaLetto(int numeroStanza) {
     }
 }
 
+
 void Reparto::svuotaLetti() {
     lock_guard<mutex> lock(mtx);
     numLettiOccupati = 0;
@@ -82,10 +81,12 @@ void Reparto::svuotaLetti() {
     }
 }
 
+
 void Reparto::stampaNome() const {
     lock_guard<mutex> lock(mtx);
     cout << "REPARTO: " << nome << " (" << specializzazione << ")" << endl;
 }
+
 
 void Reparto::stampaLetti() const {
     lock_guard<mutex> lock(mtx);
@@ -97,6 +98,7 @@ void Reparto::stampaLetti() const {
         s.stampaDettagli();
     }
 }
+
 
 void Reparto::stampaDettagli() const {
     stampaNome();
