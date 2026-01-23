@@ -16,3 +16,5 @@ Martina;Strazzer;58;MRTSTZ123;Nessuna;Ortopedia;31/01/2026;12/02/2026;-1
 Francesco;Castellani;5;FRNCST123;Aspirina;Pediatria;22/01/2026;18/02/2026;-1
 Benedetta;Crivellaro;38;BNDCRV123;Nessuna;Ortopedia;10/08/2026;20/08/2026;-1
 Giulia;Mazzola;20;GLAMZZ123;Nessuna;Cardiochirurgia;03/02/2026;14/02/2026;-1
+Adriano;Carlini;13;DRNCRL123;Nessuna;Pediatria;01/01/2026;23/01/2026;-1
+Maria;Poggi;40;MRAPGG123;Nessuna;Chirurgia Estetica;26/01/2026;04/02/2026;-1
