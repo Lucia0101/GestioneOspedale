@@ -3,10 +3,10 @@
 #include "Ospedale.h"
 
 #include <iostream>
-#include <utility> //per far funzionare std::move
-#include <ctime>   // Per time() e localtime()
-#include <iomanip> // Per setfill e setw
-#include <sstream> // Per stringstream
+#include <utility> 
+#include <ctime>  
+#include <iomanip> 
+#include <sstream> 
 
 string determinaRepartoPerEta(int eta, string repartoOperazione) {
     if (eta < 18) {
@@ -18,6 +18,7 @@ string determinaRepartoPerEta(int eta, string repartoOperazione) {
     }
 }
 
+
 string getDataAttuale() {
     time_t t = time(0);
     struct tm * now = localtime(&t);
@@ -28,7 +29,9 @@ string getDataAttuale() {
     return ss.str();
 }
 
+
 using namespace std;
+
 
 Paziente::Paziente(string _nome,string _cognome,int _eta ,string _cf,string _allergie,string _reparto,string _dataRicovero,string _dataDimissioni,int _numStanza):
 Persona(_nome,_cognome,_eta){
@@ -42,6 +45,7 @@ Persona(_nome,_cognome,_eta){
 	listaFarmaci = nullptr;
 }
 
+
 Paziente::Paziente(const Paziente& paz):Persona(paz){ //costruttore di copia
 	cf = paz.cf;
 	allergie = paz.allergie;
@@ -54,13 +58,14 @@ Paziente::Paziente(const Paziente& paz):Persona(paz){ //costruttore di copia
 	if(paz.listaFarmaci != nullptr){
 		listaFarmaci = new string[numFarmaci];
 		for (int i = 0; i < numFarmaci; i++){
-			listaFarmaci[i] = paz.listaFarmaci[i];//copio tutti i valori nella lista
+			listaFarmaci[i] = paz.listaFarmaci[i];
 		}
 	}else{
 		listaFarmaci = nullptr;
 	}
 	cout << "Copiato: " << cf << endl;
 }
+
 
 //costrutore move, pensato per quando un paziente si sposta di reparto
 Paziente::Paziente(Paziente&& paz) noexcept:Persona(move(paz)){
@@ -80,11 +85,13 @@ Paziente::Paziente(Paziente&& paz) noexcept:Persona(move(paz)){
 	cout << "Spostato: " << cf << endl;
 }
 
+
 Paziente::~Paziente() {
     if (listaFarmaci != nullptr) {
         delete[] listaFarmaci;
     }
 }
+
 
 void Paziente::prestiviFarmaco(string nomeFarmaco){
 	string* temp = new string[numFarmaci + 1];
@@ -98,6 +105,7 @@ void Paziente::prestiviFarmaco(string nomeFarmaco){
     numFarmaci++;
 }
 
+
 void Paziente::stampaTerapie() const {
     if (numFarmaci > 0 && listaFarmaci != nullptr) {
         cout << "Terapie prescritte: ";
@@ -108,6 +116,7 @@ void Paziente::stampaTerapie() const {
         cout << endl;
     }
 }
+
 
 void Paziente::stampaInfo()const{
     if (cf.empty()) {
@@ -134,9 +143,9 @@ void Paziente::stampaInfo()const{
     
     cout<<"Allergie: "<<allergie<<endl;
     
-    // Usa la nuova funzione per stampare terapie
     stampaTerapie();
 }
+
 
 void Paziente::ricovera(Reparto& rep) {
     string oggiStr = getDataAttuale();
@@ -171,8 +180,10 @@ void Paziente::stampaPerDimessi(string infoOperazione) const {
     cout << "" << infoOperazione << endl;
 }
 
+
 void Paziente::ordinaPerCognome(list<Paziente*>& pazienti) {
     pazienti.sort([](Paziente* a, Paziente* b) {
         return a->getCognome() < b->getCognome();
     });
 }
+
