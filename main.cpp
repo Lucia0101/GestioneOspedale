@@ -31,6 +31,8 @@ void visualizzaMedici(Ospedale& osp);
 void visualizzaInfermieri(Ospedale& osp);
 void visualizzaPazienti(Ospedale& osp);
 void reportGiornaliero(Ospedale& osp);
+void pazientiProgrammati(Ospedale& osp);
+void pazientiDimessi(Ospedale& osp);
 void visualizzaReparti(Ospedale& osp);
 void ricercaModificaPaziente(Ospedale& osp);
 void stampaSituazioneOspedale(Ospedale& osp);
@@ -55,7 +57,7 @@ int main(int argc, char** argv) {
         cout<<"Operazioni caricate."<<endl;
 
         // Simulazione Operazioni (collega i dati caricati)
-        simulaOperazioni(osp);
+        //simulaOperazioni(osp);  //se non si toglie conta 2 operazioni in più, quelle simulate
         cout<<"Operazioni simulate."<<endl;
 
     }catch(const exception& e){
@@ -90,7 +92,7 @@ void simulaThreadOperazioni(Ospedale& osp) {
         // Aggiungi operazione al registro
         try {
             Operazione op(getDataAttuale(), "MSSSIGN123", 
-                         "Bypass cardiaco (simulato)", "Riuscita", 
+                         "Bypass cardiaco (simulato)",
                          "Monitoraggio cardiaco");
             osp.aggiungiOperazione(op);
         } catch (const exception& e) {
@@ -107,7 +109,7 @@ void simulaThreadOperazioni(Ospedale& osp) {
         // Aggiungi operazione al registro
         try {
             Operazione op(getDataAttuale(), "MARFERR123", 
-                         "Riduzione frattura scomposta (simulato)", "Riuscita", 
+                         "Riduzione frattura scomposta (simulato)", 
                          "Fisioterapia");
             osp.aggiungiOperazione(op);
         } catch (const exception& e) {
@@ -229,7 +231,7 @@ void caricaOperazioni(Ospedale& osp,const string& filename) {
         getline(ss,cura,';');
         
         //Creare l'operazione
-        Operazione op(data,cf,tipo,esito,cura);
+        Operazione op(data,cf,tipo,cura);
         
         //Cercare il paziente e assegnare farmaci se necessario
         try{
@@ -263,7 +265,7 @@ void simulaOperazioni(Ospedale& osp){
         Paziente& paziente=osp.findCFpaziente("ALFSIGN123");
 
         if(capoEquipe&&assistente){
-            Operazione op("21/01/2026","ALFSIGN123","Bypass cardiaco","Riuscita","Monitoraggio intensivo");
+            Operazione op("21/01/2026","ALFSIGN123","Bypass cardiaco","Monitoraggio intensivo");
 
             shared_ptr<Medico> sp1(capoEquipe, [](Medico*){});
             shared_ptr<Medico> sp2(assistente, [](Medico*){});
@@ -286,7 +288,7 @@ void simulaOperazioni(Ospedale& osp){
         Paziente& paziente = osp.findCFpaziente("MARFERR123");
 
         if (ortopedico) {
-            Operazione op("15/05/2026", "MARFERR123", "Frattura scomposta", "Riuscita", "Fisioterapia");
+            Operazione op("15/05/2026", "MARFERR123", "Frattura scomposta", "Fisioterapia");
             
             shared_ptr<Medico> sp(ortopedico, [](Medico*){});
             op.aggiungiMedico(sp);
@@ -306,7 +308,7 @@ void simulaOperazioni(Ospedale& osp){
         Paziente& paziente = osp.findCFpaziente("MAGOL123");
 
         if (chirurgo) {
-            Operazione op("19/01/2026", "MAGOL123","Rinoplastica", "Riuscita", "Riposo assoluto");
+            Operazione op("19/01/2026", "MAGOL123","Rinoplastica", "Riposo assoluto");
             
             shared_ptr<Medico> sp(chirurgo, [](Medico*){});
             op.aggiungiMedico(sp);
@@ -351,11 +353,13 @@ void menu(Ospedale& osp) {
         cout << "2) Visualizzazione infermieri" << endl;
         cout << "3) Visualizzazione pazienti" << endl;
         cout << "4) Report giornaliero" << endl;
-        cout << "5) Visualizzazione reparti" << endl;
-        cout << "6) Simulazione thread operazioni" << endl;
-        cout << "7) Esci dal programma" << endl;
+        cout << "5) Visualizza pazienti programmati" << endl;
+        cout << "6) Visualizza pazienti dimessi" << endl;
+        cout << "7) Visualizzazione reparti" << endl;
+        cout << "8) Simulazione thread operazioni" << endl;
+        cout << "9) Esci dal programma" << endl;
         cout << "========================================" << endl;
-        cout << "Scegli un'opzione (1-7): ";
+        cout << "Scegli un'opzione (1-9): ";
         
         // Controllo input
         if (!(cin >> scelta)) {
@@ -382,21 +386,27 @@ void menu(Ospedale& osp) {
                 reportGiornaliero(osp);
                 break;
             case 5:
-                visualizzaReparti(osp);
+                pazientiProgrammati(osp);
                 break;
             case 6:
+		        pazientiDimessi(osp);
+                break;
+            case 7:
+                visualizzaReparti(osp);
+                break;
+            case 8:
 		        system("cls");
 		        simulaThreadOperazioni(osp);  
 		        system("pause");
 		        break;
-    		case 7:  
+    		case 9:  
         		cout << "Uscita dal programma..." << endl;
         		return;
             default:
                 cout << "Opzione non valida. Riprova." << endl;
         }
         
-        if (scelta != 6) {
+        if (scelta != 9) {
         	cout<<endl;
             cout << "========================================" << endl;
             cout << "Vuoi tornare al menu principale? (S/N): ";
@@ -544,6 +554,42 @@ void reportGiornaliero(Ospedale& osp) {
     osp.stampaPazientiFiltrati();
     
     cout << "\n========================================" << endl;
+    system("pause");
+}
+
+void pazientiProgrammati(Ospedale& osp){
+	system("cls");
+	osp.stampaPazientiProgrammati();
+	cout << "\n========================================" << endl;
+	
+	char scelta;
+    cout<<endl;
+    cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
+    cin >> scelta;
+    cin.ignore();
+    
+    if (scelta == 'S' || scelta == 's') {
+        ricercaModificaPaziente(osp);
+    }
+	
+    system("pause");
+}
+
+void pazientiDimessi(Ospedale& osp){
+	system("cls");
+	osp.stampaPazientiDimessi();
+	cout << "\n========================================" << endl;
+	
+	char scelta;
+    cout<<endl;
+    cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
+    cin >> scelta;
+    cin.ignore();
+    
+    if (scelta == 'S' || scelta == 's') {
+        ricercaModificaPaziente(osp);
+    }
+	
     system("pause");
 }
 
@@ -752,3 +798,5 @@ void visualizzaReparti(Ospedale& osp) {
     cout << "\n========================================" << endl;
     system("pause");
 }
+
+
