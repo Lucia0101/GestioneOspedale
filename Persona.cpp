@@ -9,9 +9,11 @@ Persona::Persona(string _nome,string _cognome,int _eta){
 	eta=_eta;
 }
 
+
 void Persona::stampaInfo()const{
 	cout<<cognome<<" "<<nome<<", "<<eta<<" anni"<<endl;
 }
+
 
 ostream& operator << (ostream& os, const Persona& p){
 	p.stampaInfo();
