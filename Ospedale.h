@@ -58,7 +58,9 @@ class Ospedale{
 	    void stampaPazientiFiltrati() const; 
 	    
 	    Medico* findMedicoByID(const string& id);
-		const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }
+	    const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }
+	    
+	    
 	    
 	    ~Ospedale();
 };

@@ -30,13 +30,17 @@ class Reparto{
 		Reparto(string n, int numM, int numInf, int numStanz, int letStanz, string spec);
 		
 		string getNome() const { return nome; }
+		string getSpecializzazione() const { return specializzazione; }
 		
 		bool assegnaLetto(int& stanzaAssegnata);
 		void liberaLetto(int numeroStanza);
 		void svuotaLetti();
+		
+		// Funzioni separate per stampa
+		void stampaNome() const;
+		void stampaLetti() const;
 		void stampaDettagli() const; 
 		
 		~Reparto(){}
 };
-
 #endif

@@ -24,6 +24,7 @@ class Paziente: public Persona{
 		virtual ~Paziente();
 		
 		virtual void stampaInfo()const;
+		void stampaTerapie() const;  // Aggiunto
 		
 		Paziente(const Paziente& paz); //costruttore copia
 		Paziente(Paziente&& paz) noexcept; //move semantics
@@ -52,6 +53,4 @@ class Paziente: public Persona{
 	    void setStanza(int nuovaStanza) { numStanza = nuovaStanza; }
 	   
 };
-
 #endif
-

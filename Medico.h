@@ -28,7 +28,8 @@ class Medico: public Persona{
 		
 		virtual void stampaInfo() const;
 		
-		string getID()const{return codID;}		
+		string getID()const{return codID;}	
+		string getSpecializzazione() const { return specializzazione; }	
 };
 
 #endif

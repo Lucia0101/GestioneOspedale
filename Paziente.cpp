@@ -98,6 +98,16 @@ void Paziente::prestiviFarmaco(string nomeFarmaco){
     numFarmaci++;
 }
 
+void Paziente::stampaTerapie() const {
+    if (numFarmaci > 0 && listaFarmaci != nullptr) {
+        cout << "Terapie prescritte: ";
+        for(int i = 0; i < numFarmaci; i++) {
+            cout << listaFarmaci[i];
+            if(i < numFarmaci - 1) cout << ", ";
+        }
+        cout << endl;
+    }
+}
 
 void Paziente::stampaInfo()const{
     if (cf.empty()) {
@@ -124,14 +134,8 @@ void Paziente::stampaInfo()const{
     
     cout<<"Allergie: "<<allergie<<endl;
     
-    if (numFarmaci > 0 && listaFarmaci != nullptr) {
-        cout << "Terapie prescritte: ";
-        for(int i=0; i<numFarmaci; i++){
-            cout<<listaFarmaci[i];
-            if(i < numFarmaci-1) cout << ", ";
-        }
-        cout << endl;
-    }
+    // Usa la nuova funzione per stampare terapie
+    stampaTerapie();
 }
 
 void Paziente::ricovera(Reparto& rep) {

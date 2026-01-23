@@ -82,13 +82,23 @@ void Reparto::svuotaLetti() {
     }
 }
 
-void Reparto::stampaDettagli() const {
+void Reparto::stampaNome() const {
     lock_guard<mutex> lock(mtx);
     cout << "REPARTO: " << nome << " (" << specializzazione << ")" << endl;
-    cout << "[Staff: " << numInfermieri << " Infermieri]" << endl;
-    cout << "[Letti totali: " << numLettiLiberi + numLettiOccupati << " | Liberi: " << numLettiLiberi << "]" << endl;
+}
+
+void Reparto::stampaLetti() const {
+    lock_guard<mutex> lock(mtx);
+    cout << "[Letti totali: " << numLettiLiberi + numLettiOccupati 
+         << " | Liberi: " << numLettiLiberi 
+         << " | Occupati: " << numLettiOccupati << "]" << endl;
     
     for(const auto& s : stanze) {
         s.stampaDettagli();
     }
+}
+
+void Reparto::stampaDettagli() const {
+    stampaNome();
+    stampaLetti();
 }
