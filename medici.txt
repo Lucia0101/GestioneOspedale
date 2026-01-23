@@ -16,3 +16,11 @@ Franco;Bonetti;38;M015;Ortopedia
 Caterina;Filippi;31;M016;Cardiochirurgia
 Edoardo;Maoli;63;M017;Chirurgia Estetica
 Maurizio;Vassanelli;55;M018;Chirurgia Estetica
+Anastasia;Signorini;50;M019;Pediatria
+Amedeo;Scolari;37;M020;Pediatria
+Eleonora;Mazza;47;M021;Pediatria
+Ginevra;Padovani;43;M022;Pediatria
+Alex;Martini;38;M023;Geriatria
+Virginia;Albertini;31;M024;Geriatria
+Andrea;Tommasini;63;M025;Geriatria
+Guglielmo;Florean;55;M026;Geriatria
