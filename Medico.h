@@ -17,6 +17,7 @@ class Medico: public Persona{
 	
 	public:
 		Medico(string _nome,string _cognome,int _eta,string _codID,string _specializzazione);
+		Medico(Medico&& m) noexcept;
 		virtual ~Medico(){};
 		
 		bool isOccupato(string data) const;
@@ -27,6 +28,7 @@ class Medico: public Persona{
 		
 		virtual void stampaInfo() const;
 		
+		string getID()const{return codID;}		
 };
 
 #endif

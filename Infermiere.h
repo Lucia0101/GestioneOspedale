@@ -19,6 +19,10 @@ class Infermiere: public Persona{
 		string getReparto() const { return reparto; }
 		static void ordinaPerCognome(vector<Infermiere* >& infermieri);
 		virtual void stampaInfo()const;
+		
+		Infermiere(const Infermiere& i);
+    	Infermiere(Infermiere&& i) noexcept;
+
 };
 
 #endif

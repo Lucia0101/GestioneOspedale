@@ -13,6 +13,9 @@ class Persona{
 	
 	public:
 		Persona(string _nome,string _cognome,int _eta); 
+    	Persona(const Persona& p) : nome(p.nome), cognome(p.cognome), eta(p.eta) {}
+    	Persona(Persona&& p) noexcept : nome(move(p.nome)), cognome(move(p.cognome)), eta(p.eta){p.eta = 0;}
+ 
 		virtual ~Persona(){};
 				
 		friend ostream& operator << (ostream& os,const Persona& p);

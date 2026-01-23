@@ -7,30 +7,23 @@
 #include <algorithm>
 using namespace std;
 
-//template base per stampare elementi ordinati per cognome dei vector
 template<typename Contenitore>
-void stampaPerCognome(const Contenitore& container,const string& titolo) { //<- funzione template
-    //crea una copia ordinabile del contenitore
+void stampaPerCognome(const Contenitore& container,const string& titolo) { 
     using TipoPuntatore=typename Contenitore::value_type;
-    using TipoOggetto=typename remove_pointer<TipoPuntatore>::type;
     
     vector<TipoPuntatore> copiaOrdinata;
     
-    //copia gli elementi
     for(const auto& elem : container) {
         copiaOrdinata.push_back(elem);
     }
     
-    //ordina per cognome
     sort(copiaOrdinata.begin(),copiaOrdinata.end(),
         [](TipoPuntatore a, TipoPuntatore b){
             return a->getCognome() < b->getCognome();
         });
     
-    //stampa il titolo
     cout<<"\n"<<titolo<<endl;
     
-    //stampa gli elementi ordinati
     for (const auto& elem : copiaOrdinata) {
         elem->stampaInfo();
         cout << endl;

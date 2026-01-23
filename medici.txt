@@ -1,0 +1,18 @@
+Mario;Rossi;45;M001;Cardiochirurgia
+Luigi;Verdi;50;M002;Ortopedia
+Giulia;Pecora;34;M003;Chirurgia Estetica
+Chiara;Faccioli;40;M004;Chirurgia Estetica
+Luisa;Bertelli;33;M005;Chirurgia Estetica
+Giulia;Pecora;34;M006;Cardiochirurgia
+Roberta;Rossi;29;M007;Cardiochirurgia
+Lorenzo;Adami;60;M008;Ortopedia
+Marco;Vercillo;55;M009;Chirurgia Estetica
+Angela;Franchi;29;M010;Ortopedia
+Luca;Poli;50;M011;Ortopedia
+Giorgia;Scandola;37;M012;Chirurgia Estetica
+Ludovica;Cristicchi;47;M013;Cardiochirurgia
+Ginevra;Mutti;43;M014;Ortopedia
+Franco;Bonetti;38;M015;Ortopedia
+Caterina;Filippi;31;M016;Cardiochirurgia
+Edoardo;Maoli;63;M017;Chirurgia Estetica
+Maurizio;Vassanelli;55;M018;Chirurgia Estetica

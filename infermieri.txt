@@ -1,0 +1,30 @@
+Anna;Bianchi;32;I001;Cardiochirurgia;Notte
+Paolo;Neri;28;I002;Cardiochirurgia;Giorno
+Anna;Soave;55;I003;Cardiochirurgia;Notte
+Francesco;Mazzola;32;I004;Cardiochirurgia;Giorno
+Lucia;Pecora;24;I005;Cardiochirurgia;Notte
+Beatrice;Faccioli;22;I006;Ortopedia;Giorno
+Umberto;Sommavilla;43;I007;Ortopedia;Notte
+Francesca;Adamo;39;I008;Ortopedia;Giorno
+Anna;Bianchi;32;I009;Ortopedia;Notte
+Tommaso;Gabbani;26;I010;Ortopedia;Giorno
+Sandra;Caruso;57;I011;Ortopedia;Notte
+Francesco;Marastoni;33;I012;Chirurgia Estetica;Notte
+Luca;Gugole;58;I013;Chirurgia Estetica;Notte
+Beatrice;Fontana;29;I014;Chirurgia Estetica;Giorno
+Riccardo;Masarin;46;I015;Chirurgia Estetica;Giorno
+Alessandro;Adamo;39;I016;Chirurgia Estetica;Giorno
+Sebastiano;Ronco;29;I017;Chirurgia Estetica;Giorno
+Matteo;Marchiosi;39;I018;Chirurgia Estetica;Giorno
+Franco;Cacciatori;49;I019;Geriatria;Giorno
+Silvana;Caccia;32;I020;Geriatria;Notte
+Nicolas;Braggio;36;I021;Geriatria;Giorno
+Teresa;Etrari;50;I022;Geriatria;Notte
+Giacomo;Beronchelli;30;I023;Pediatria;Notte
+Paolo;Rossetto;52;I024;Pediatria;Notte
+Azzurra;Quagio;29;I025;Pediatria;Giorno
+Rosa;Bernabe;27;I026;Pediatria;Giorno
+Viola;Golia;31;I027;Pediatria;Giorno
+Camilla;Ress;55;I028;Pediatria;Giorno
+Carla;Roncoletta;38;I029;Pediatria;Giorno
+Carlo;Leva;58;I030;Pediatria;Notte

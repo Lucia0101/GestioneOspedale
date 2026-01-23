@@ -1,6 +1,9 @@
 #include <iostream>
-#include <memory> //smart pointers
+#include <fstream>
+#include <sstream>
+#include <memory>
 #include <vector>
+#include <string>
 
 
 #include "Ospedale.h"
@@ -8,246 +11,346 @@
 #include "Paziente.h"
 #include "Medico.h"
 #include "Infermiere.h"
+
 using namespace std;
 
+// Funzioni di utilità per il caricamento
+void caricaMedici(Ospedale& osp, const string& filename);
+void caricaInfermieri(Ospedale& osp, const string& filename);
+void caricaPazienti(Ospedale& osp, const string& filename);
+void caricaOperazioni(Ospedale& osp, const string& filename);
 void ricercaPaziente(Ospedale& osp);
 
+void simulaOperazioni(Ospedale& osp);
+
 int main(int argc, char** argv) {
-	Ospedale osp("*PRAVA*");
-	
-	//(nome, cognome, anni, codice, specializzazione)
-	Medico* m1=new Medico("Mario","Rossi",45,"M001","Cardiochirurgia");
-	Medico* m2=new Medico("Luigi","Verdi",50,"M002","Ortopedia");
-	Medico* m3=new Medico("Giulia","Pecora",34,"M003","Chirurgia Estetica");
-	Medico* m4=new Medico("Chiara","Faccioli",40,"M004","Cardiochirurgia");
-	Medico* m5=new Medico("Luisa","Bertelli",33,"M005","Ortopedia");
-	Medico* m6=new Medico("Giulia","Pecora",34,"M006","Ortopedia");
-	Medico* m7=new Medico("Roberta","Rossi",29,"M007","Cardiochirurgia");
-	Medico* m8=new Medico("Lorenzo","Adami",60,"M008","Chirurgia estetica");
-	Medico* m9=new Medico("Marco","Vercillo",55,"M009","Chirurgia Estetica");
-	
-	//(nome, cognome, anni, codice, reparto, turno)
-	Infermiere* i1=new Infermiere("Anna","Bianchi",32,"I001","Cardiochirurgia","Notte");
-	Infermiere* i2=new Infermiere("Paolo","Neri",28,"I002","Ortopedia","Giorno");
-	Infermiere* i3=new Infermiere("Anna","Soave",55,"I003","Ortopedia","Notte");
-	Infermiere* i4=new Infermiere("Francesco","Mazzola",32,"I004","Chirurgia Estetica","Giorno");
-	Infermiere* i5=new Infermiere("Lucia","Pecora",24,"I005","Pediatria","Notte");
-	Infermiere* i6=new Infermiere("Beatrice","Faccioli",22,"I006","Ortopedia","Giorno");
-	Infermiere* i7=new Infermiere("Umberto","Sommavilla",43,"I007","Geriatria","Notte");
-	Infermiere* i8=new Infermiere("Francesca","Adamo",39,"I008","Cardiochirurgia","Giorno");
+    Ospedale osp("*PRAVA*");
 
-	//(nome, cognome, anni, CF, allergia, reparto, data ricovero, data dimissioni, stanza)
-	Paziente* p1=new Paziente("Alfonso","Signorini",69,"ALFSIGN123","Nessuna","Cardiochirurgia","20/01/2026","25/01/2026",-1);
-	Paziente* p2=new Paziente("Marco","Ferrari",35,"MARFERR123","Nessuno","Ortopedia","12/05/2026","25/05/2026",-1);
-	Paziente* p3=new Paziente("Mattia","Ruffo",16,"MARFFO123","Nessuna","Ortopedia","29/12/2025","04/01/2026",-1);
-	Paziente* p4=new Paziente("Marta","Golia",24,"MAGOL123","Pennicillina","Chirurgia Estetica","12/01/2026","25/01/2026",-1);
-	Paziente* p5=new Paziente("Alessandra","Felice",69,"ALSSDFlI123","Nessuna","Chirurgia Estetica","19/01/2026","25/01/2026",-1);
-	Paziente* p6=new Paziente("Giovanni","Delaini",78,"GOVNDLIN123","Nessuna","Cardiochirurgia","19/01/2026","25/01/2026",-1);
-	Paziente* p7=new Paziente("Giovanna","Strazzer",88,"GOVNSTZ123","Nessuna","Cardiochirurgia","19/01/2026","25/01/2026",-1);
+    try {
+        cout << "--- CARICAMENTO DATI ---" << endl;
+        caricaMedici(osp, "medici.txt");
+        cout << "Medici caricati." << endl;
+        
+        caricaInfermieri(osp, "infermieri.txt");
+        cout << "Infermieri caricati." << endl;
+        
+        caricaPazienti(osp, "pazienti.txt");
+        cout << "Pazienti caricati e ricoverati." << endl;
+        
+        caricaOperazioni(osp, "operazioni.txt");
+        cout << "Operazioni caricate." << endl;
 
-	//(data operazione, CF, nome operazione, esito, Terapia)
-	Operazione op1("15/05/2026","ALFSIGN123","Bypass cardiaco","Riuscita","Terapia anticoagulante");
-	Operazione op2("17/05/2026","MARFERR123","Operazione al ginocchio","Riuscita","Terapia riabilitativa");
-	Operazione op3("02/01/2026","MARFFO123","Braccio rotto","Riuscita","Terapia riabilitativa");
-	Operazione op4("17/01/2026","MAGOL123","Rinoplastica","Riuscita","Terapia anticoagulante");
-	Operazione op5("20/01/2026","ALSSDFlI123","Rinoplastica","Riuscita","Terapia anticoagulante");
-	Operazione op6("20/01/2026","GOVNDLIN123", "Posizionamento valvola cardiaca", "Riuscita", "Terapia anticoagulante");
-	Operazione op7("20/01/2026","GOVNSTZ123", "Posizionamento valvola cardiaca", "Riuscita", "Terapia anticoagulante");
-	
-	
-	m1->completaOperazione(p1, op1, {"Antidolorifico, Ghiaccio spray"});
-	m2->completaOperazione(p2, op2, {"Tachipirina 1000"});
-	m2->completaOperazione(p3, op3, {"Tachipirina 1000"});
-	m3->completaOperazione(p4, op4, {"Tachipirina 1000"});
-	m4->completaOperazione(p5, op5, {});
-	m5->completaOperazione(p5, op5, {});
-	m7->completaOperazione(p6, op6, {"Eparina"});
-	m7->completaOperazione(p7, op7, {"Eparina"});
+        // Simulazione Operazioni (collega i dati caricati)
+        simulaOperazioni(osp);
+        cout << "Operazioni simulate." << endl;
 
-	osp.aggiungiMedico(m1);
-    osp.aggiungiMedico(m2);
-    osp.aggiungiMedico(m3);
-    osp.aggiungiMedico(m4);
-    osp.aggiungiMedico(m5);
-    osp.aggiungiMedico(m6);
-    osp.aggiungiMedico(m7);
-    osp.aggiungiMedico(m8);
-    osp.aggiungiMedico(m9);
-    
-    osp.aggiungiInfermiere(i1);
-    osp.aggiungiInfermiere(i2);
-    osp.aggiungiInfermiere(i3);
-    osp.aggiungiInfermiere(i4);
-    osp.aggiungiInfermiere(i5);
-    osp.aggiungiInfermiere(i6);
-    osp.aggiungiInfermiere(i7);
-    osp.aggiungiInfermiere(i8);
-    
-    osp.aggiungiPaziente(p1);
-    osp.aggiungiPaziente(p2);
-    osp.aggiungiPaziente(p3);
-    osp.aggiungiPaziente(p4);
-    osp.aggiungiPaziente(p5);
-    osp.aggiungiPaziente(p6);
-    osp.aggiungiPaziente(p7);
-    
-    osp.aggiungiOperazione(op1); 
-    osp.aggiungiOperazione(op2); 
-    osp.aggiungiOperazione(op3); 
-    osp.aggiungiOperazione(op4); 
-    osp.aggiungiOperazione(op5);
-    osp.aggiungiOperazione(op6);
-    osp.aggiungiOperazione(op7);
-    
-    shared_ptr<Medico> sm1(m1, [](Medico*){});
-    shared_ptr<Medico> sm2(m2, [](Medico*){});
-    shared_ptr<Medico> sm3(m3, [](Medico*){});
-    shared_ptr<Medico> sm4(m4, [](Medico*){});
-    shared_ptr<Medico> sm5(m5, [](Medico*){});
-    shared_ptr<Medico> sm6(m6, [](Medico*){});
-    shared_ptr<Medico> sm7(m7, [](Medico*){});
-    shared_ptr<Medico> sm8(m8, [](Medico*){});
-    shared_ptr<Medico> sm9(m9, [](Medico*){});
-	
-    
-    //INFORMAZIONI GENERALI DI STAMPA
-    cout << endl;
+    } catch (const exception& e) {
+        cerr << "ERRORE CRITICO DURANTE IL CARICAMENTO: " << e.what() << endl;
+        return 1;
+    }
+
+
+    // --- STAMPE E INTERAZIONI ---
+    cout << endl << "--- SITUAZIONE OSPEDALE ---" << endl;
     osp.stampaDati();
-    
-    //STAMPA TUTTO ORDINATO
-    cout<<endl<<endl;
+
+    cout << endl << endl;
     osp.stampaPazientiOrdinati();
-	cout<<endl;
-	osp.stampaMediciOrdinati();
-	cout<<endl;
-	osp.stampaInfermieriOrdinati();
-	
-	//STAMPA IN BASE A DIMESSO, AGGINTO, IN ATTESA
-	cout<<endl;
-    osp.stampaPazientiFiltrati();
-    
-    //REPARTI + OPERAZIONI IN REAL TIME
     cout << endl;
-    osp.stampaReparti(); 
-	cout<<endl; 
+    osp.stampaMediciOrdinati();
+    cout << endl;
+    osp.stampaInfermieriOrdinati();
+
+    cout << endl;
+    osp.stampaPazientiFiltrati();
+
+    cout << endl;
+    osp.stampaReparti();
+    cout << endl;
     osp.stampaOperazioni();
-    cout<<endl;
-    
- /*   try {
-        //RICOVERI GESTITI DA ECCEZIONI
-        p1->ricovera(*(osp.getReparto("Cardiochirurgia")));
-        p2->ricovera(*(osp.getReparto("Ortopedia")));
-        p3->ricovera(*(osp.getReparto("Ortopedia")));
-        p4->ricovera(*(osp.getReparto("Chirurgia Estetica")));
-        p5->ricovera(*(osp.getReparto("Chirurgia Estetica")));
-        p6->ricovera(*(osp.getReparto("Cardiochirurgia")));
-        p7->ricovera(*(osp.getReparto("Cardiochirurgia")));
+    cout << endl;
 
-        //AGGIUNTA MEDICI ALLE OPERAZIONI
-        op1.aggiungiMedico(sm1);
-        op2.aggiungiMedico(sm2);
-        op4.aggiungiMedico(sm3);
-        op3.aggiungiMedico(sm2);
-        op5.aggiungiMedico(sm8);
-        op5.aggiungiMedico(sm9);
-        op6.aggiungiMedico(sm7);
-        op7.aggiungiMedico(sm7); //Dovrebbe fallire per stessa data
-
-    } catch(const exception& e) {
-        cerr << "\n>>> ERRORE DI GESTIONE: " << e.what() << endl;
-    }*/
-    
-    //STATISTICA RANDOM
-    cout<<"STATISTICA ETA MEDIA: ";
-    osp.statistichePazienti();
-    cout<<endl;
-    
-    //INTERAZIONE CON CONSOLE
+    // INTERAZIONE
     ricercaPaziente(osp);
     
+    // Ristampa per vedere modifiche
     osp.stampaPazientiOrdinati();
-	return 0;
+
+    return 0;
 }
 
 
+// --- IMPLEMENTAZIONE FUNZIONI DI CARICAMENTO ---
+void caricaMedici(Ospedale& osp, const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
+
+    string linea;
+    while (getline(file, linea)) {
+        if (linea.empty()) continue;
+        stringstream ss(linea);
+        string nome, cognome, etaStr, id, spec;
+        
+        getline(ss, nome, ';');
+        getline(ss, cognome, ';');
+        getline(ss, etaStr, ';');
+        getline(ss, id, ';');
+        getline(ss, spec, ';');
+
+        osp.aggiungiMedico(new Medico(nome, cognome, stoi(etaStr), id, spec));
+    }
+    file.close();
+}
+
+
+void caricaInfermieri(Ospedale& osp, const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
+
+    string linea;
+    while (getline(file, linea)) {
+        if (linea.empty()) continue;
+        stringstream ss(linea);
+        string nome, cognome, etaStr, id, rep, turno;
+        
+        getline(ss, nome, ';');
+        getline(ss, cognome, ';');
+        getline(ss, etaStr, ';');
+        getline(ss, id, ';');
+        getline(ss, rep, ';');
+        getline(ss, turno, ';');
+
+        osp.aggiungiInfermiere(new Infermiere(nome, cognome, stoi(etaStr), id, rep, turno));
+    }
+    file.close();
+}
+
+
+void caricaPazienti(Ospedale& osp, const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
+
+    string linea;
+    while (getline(file, linea)) {
+        if (linea.empty()) continue;
+        stringstream ss(linea);
+        string nome, cognome, etaStr, cf, allergie, reparto, dRic, dDim;
+        
+        getline(ss, nome, ';');
+        getline(ss, cognome, ';');
+        getline(ss, etaStr, ';');
+        getline(ss, cf, ';');
+        getline(ss, allergie, ';');
+        getline(ss, reparto, ';');
+        getline(ss, dRic, ';');
+        getline(ss, dDim, ';');
+
+        Paziente* p = new Paziente(nome, cognome, stoi(etaStr), cf, allergie, reparto, dRic, dDim, -1);
+        osp.aggiungiPaziente(p);
+        
+        // Tenta il ricovero automatico nel reparto corretto
+        try {
+            auto repPtr = osp.getReparto(reparto);
+            if(repPtr) {
+                p->ricovera(*repPtr);
+            }
+        } catch (...) {
+            // Ignora errori di reparto non trovato
+        }
+    }
+    file.close();
+}
+
+void caricaOperazioni(Ospedale& osp, const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
+
+    string linea;
+    while (getline(file, linea)) {
+        if (linea.empty()) continue;
+        stringstream ss(linea);
+        string data, cf, tipo, esito, cura;
+        
+        getline(ss, data, ';');
+        getline(ss, cf, ';');
+        getline(ss, tipo, ';');
+        getline(ss, esito, ';');
+        getline(ss, cura, ';');
+        
+        // Creare l'operazione
+        Operazione op(data, cf, tipo, esito, cura);
+        
+        // Cercare il paziente e assegnare farmaci se necessario
+        try {
+            Paziente& paziente = osp.findCFpaziente(cf);
+            
+            // Assegna automaticamente la cura principale
+            if (!cura.empty()) {
+                paziente.prestiviFarmaco(cura);
+            }
+            
+            // Aggiungi l'operazione all'ospedale
+            osp.aggiungiOperazione(op);
+            
+        } catch (const exception& e) {
+            cerr << "Attenzione: Paziente con CF " << cf << " non trovato per l'operazione del " << data << endl;
+            // Carica comunque l'operazione senza assegnare farmaci
+            osp.aggiungiOperazione(op);
+        }
+    }
+    file.close();
+}
+
+
+void simulaOperazioni(Ospedale& osp) {
+    cout << endl << "--- SIMULAZIONE INTERVENTI CHIRURGICI ---" << endl;
+
+    // OPERAZIONE 1: Cardiochirurgia
+    try {
+        Medico* capoEquipe = osp.findMedicoByID("M001");
+        Medico* assistente = osp.findMedicoByID("M006");
+        Paziente& paziente = osp.findCFpaziente("ALFSIGN123");
+
+        if (capoEquipe && assistente) {
+            Operazione op("21/01/2026", "ALFSIGN123", "Bypass Aortocoronarico", "Riuscita", "Monitoraggio intensivo");
+
+            shared_ptr<Medico> sp1(capoEquipe, [](Medico*){});
+            shared_ptr<Medico> sp2(assistente, [](Medico*){});
+            
+            op.aggiungiMedico(sp1);
+            op.aggiungiMedico(sp2);
+
+            capoEquipe->completaOperazione(&paziente, op, {"Eparina", "Morphina", "Antibiotico"});
+
+            osp.aggiungiOperazione(op);
+            cout << " [OK] Bypass cardiaco registrato per paziente Signorini." << endl;
+        }
+    } catch (const exception& e) {
+        cerr << " [ERR] Operazione 1 fallita: " << e.what() << endl;
+    }
+
+    // OPERAZIONE 2: Ortopedia
+    try {
+        Medico* ortopedico = osp.findMedicoByID("M002");
+        Paziente& paziente = osp.findCFpaziente("MARFERR123");
+
+        if (ortopedico) {
+            Operazione op("15/05/2026", "MARFERR123", "Riduzione frattura scomposta", "Riuscita", "Fisioterapia");
+            
+            shared_ptr<Medico> sp(ortopedico, [](Medico*){});
+            op.aggiungiMedico(sp);
+
+            ortopedico->completaOperazione(&paziente, op, {"Tachipirina 1000", "Gesso"});
+            
+            osp.aggiungiOperazione(op);
+            cout << " [OK] Intervento frattura registrato per paziente Ferrari." << endl;
+        }
+    } catch (const exception& e) {
+        cerr << " [ERR] Operazione 2 fallita: " << e.what() << endl;
+    }
+
+    // OPERAZIONE 3: Chirurgia Estetica
+    try {
+        Medico* chirurgo = osp.findMedicoByID("M003");
+        Paziente& paziente = osp.findCFpaziente("MAGOL123");
+
+        if (chirurgo) {
+            Operazione op("19/01/2026", "MAGOL123", "Rinoplastica", "Riuscita", "Riposo assoluto");
+            
+            shared_ptr<Medico> sp(chirurgo, [](Medico*){});
+            op.aggiungiMedico(sp);
+
+            chirurgo->completaOperazione(&paziente, op, {"Antidolorifico leggero", "Ghiaccio"});
+            
+            osp.aggiungiOperazione(op);
+            cout << " [OK] Rinoplastica registrata per paziente Golia." << endl;
+        }
+    } catch (const exception& e) {
+        cerr << " [ERR] Operazione 3 fallita: " << e.what() << endl;
+    }
+
+    // OPERAZIONE 4: Test errore
+    try {
+        Paziente& paziente = osp.findCFpaziente("NONESISTE123");
+    } catch (const exception& e) {
+        cout << " [INFO] Test sicurezza superato: Impossibile operare paziente inesistente." << endl;
+    }
+}
+
 void ricercaPaziente(Ospedale& osp){
-	char risposta;
-    cout<<"RICERCA PAZIENTE PER CODICE FISCALE"<<endl;
-    
-    cout<<"Ricercare codice fiscale di un paziente? (S/N): ";
-    cin>>risposta;
-    cin.ignore(); //rimuovere il newline rimasto
+    char risposta;
+    cout << "RICERCA PAZIENTE PER CODICE FISCALE" << endl;
+    cout << "Ricercare codice fiscale di un paziente? (S/N): ";
+    cin >> risposta;
+    cin.ignore(); 
     
     if(risposta=='S' || risposta=='s'){
         string cf;
-        cout<<"Inserisci il codice fiscale del paziente: ";
+        cout << "Inserisci il codice fiscale del paziente: ";
         getline(cin, cf);
         
         try{
             Paziente& pazienteTrovato = osp.findCFpaziente(cf);
-            
-            cout<<endl;
-            cout<<"CARTELLA PAZIENTE TROVATA"<<endl;
+            cout << endl << "CARTELLA PAZIENTE TROVATA" << endl;
             pazienteTrovato.stampaInfo();
             
             char modifica;
-            cout<<"\nModificare la cartella? (S/N): ";
-            cin>>modifica;
+            cout << "\nModificare la cartella? (S/N): ";
+            cin >> modifica;
             cin.ignore();
             
             if(modifica=='S' || modifica=='s'){
-            	cout<<endl;
-    			cout<<"\n--- MODIFICA CARTELLA PAZIENTE ---"<<endl;
+                cout << endl;
+                cout << "\n--- MODIFICA CARTELLA PAZIENTE ---" << endl;
     
-			    string input;
-			    int valoreInt;
-			    
-			    cout<<"Nome attuale: "<<pazienteTrovato.getNome()<<endl;
-			    cout<<"Nuovo nome (premi Invio per mantenere): ";
-			    getline(cin, input);
-			    if (!input.empty()){
-			        pazienteTrovato.setNome(input);
-			    }
-			    
-			    cout<<endl;
-			    cout<<"Cognome attuale: "<<pazienteTrovato.getCognome()<<endl;
-			    cout<<"Nuovo cognome (premi Invio per mantenere): ";
-			    getline(cin, input);
-			    if (!input.empty()){
-			        pazienteTrovato.setCognome(input);
-			    }
-			    
-			    cout<<endl;
-			    cout<<"Eta attuale: "<<pazienteTrovato.getEta()<<" anni"<<endl;
-			    cout<<"Nuova eta' (inserisci 0 per mantenere): ";
-			    cin>>valoreInt;
-			    cin.ignore();
-			    if(valoreInt > 0){
-			        pazienteTrovato.setEta(valoreInt);
-			    }
-			    
-			    cout<<endl;
-			    cout<<"Allergie attuali: "<< pazienteTrovato.getAllergie()<<endl;
-			    cout<<"Nuove allergie (premi Invio per mantenere): ";
-			    getline(cin, input);
-			    if(!input.empty()){
-			        pazienteTrovato.setAllergie(input);
-			    }
-			    
-			    cout<<"\nModifica completata!"<<endl;
-			    cout<<"CARTELLA MODIFICATA: "<<endl;
-			    pazienteTrovato.stampaInfo();
+                string input;
+                int valoreInt;
                 
-            }else{
-                cout<<"\nModifica annullata."<<endl;
+                cout << "Nome attuale: " << pazienteTrovato.getNome() << endl;
+                cout << "Nuovo nome (premi Invio per mantenere): ";
+                getline(cin, input);
+                if (!input.empty()){
+                    pazienteTrovato.setNome(input);
+                }
+                
+                cout << endl;
+                cout << "Cognome attuale: " << pazienteTrovato.getCognome() << endl;
+                cout << "Nuovo cognome (premi Invio per mantenere): ";
+                getline(cin, input);
+                if (!input.empty()){
+                    pazienteTrovato.setCognome(input);
+                }
+                
+                cout << endl;
+                cout << "Eta attuale: " << pazienteTrovato.getEta() << " anni" << endl;
+                cout << "Nuova eta' (inserisci 0 per mantenere): ";
+                cin >> valoreInt;
+                cin.ignore();
+                if(valoreInt > 0){
+                    pazienteTrovato.setEta(valoreInt);
+                }
+                
+                cout << endl;
+                cout << "Allergie attuali: " << pazienteTrovato.getAllergie() << endl;
+                cout << "Nuove allergie (premi Invio per mantenere): ";
+                getline(cin, input);
+                if(!input.empty()){
+                    pazienteTrovato.setAllergie(input);
+                }
+                
+                cout << "\nModifica completata!" << endl;
+                cout << "CARTELLA MODIFICATA: " << endl;
+                pazienteTrovato.stampaInfo();
+                
+            } else {
+                cout << "\nModifica annullata." << endl;
             }
             
-        }catch(const exception& e){
-            cerr<<"\n>>> ERRORE: "<<e.what()<<endl;
-            cerr<<"Codice fiscale non trovato nel sistema."<<endl;
+        } catch(const exception& e){
+            cerr << "\n>>> ERRORE: " << e.what() << endl;
+            cerr << "Codice fiscale non trovato nel sistema." << endl;
         }
-        
-    }else{
-        cout<<"\nRicerca annullata."<<endl;
+    } else {
+        cout << "\nRicerca annullata." << endl;
     }
 }

@@ -24,6 +24,8 @@ class Operazione{
 		string getData() const { return data; }
 		string getCFPaziente() const { return cf_paz; }
 		string getTipo() const { return tipo; }
+		string getEsito()const{return esito;}
+		
 		void stampaInfo()const;
 		void aggiungiMedico(shared_ptr<Medico> m);
 		

@@ -1,0 +1,18 @@
+22/01/2026;MSSSIGN123;Bypass cardiaco;Riuscita;Terapia anticoagulante
+17/05/2026;MARFERR123;Operazione al ginocchio;;
+02/01/2026;MARFFO123;Braccio rotto;Riuscita;Terapia riabilitativa
+17/01/2026;MAGOL123;Rinoplastica;Riuscita;Terapia anticoagulante
+21/01/2026;ALSSDFLI123;Rinoplastica;Riuscita;Terapia anticoagulante
+21/01/2026;GOVNDLIN123;Posizionamento valvola cardiaca;Riuscita;Terapia anticoagulante
+20/01/2026;GOVNSTZ123;Posizionamento valvola cardiaca;Riuscita;Terapia anticoagulante
+21/01/2026;MATCRLL123;Bypass cardiaco;Riuscita;Terapia anticoagulante
+22/01/2026;SMNNGN123;Operazione al ginocchio;Riuscita;Terapia riabilitativa
+03/02/2026;STFFRR123;Posizionamento valvola cardiaca;;
+24/01/2026;MNLSTRP123;Rinoplastica;Riuscita;Terapia anticoagulante
+28/01/2026;RBTCST123;Rinoplastica;Riuscita;Terapia anticoagulante
+27/01/2026;PTRPRR123;Posizionamento valvola cardiaca;Riuscita;Terapia anticoagulante
+18/01/2026;GRGFRL123;Mastoplastica additiva;Riuscita;Terapia anticoagulante
+04/02/2026;MRTSTZ123;Anca rotta;;
+29/01/2026;FRNCST123;Posizionamento valvola cardiaca;Riuscita;Terapia anticoagulante
+12/08/2026;BNDCRV123;Braccio rotto;;
+04/02/2026;GLAMZZ123;Posizionamento valvola cardiaca;;

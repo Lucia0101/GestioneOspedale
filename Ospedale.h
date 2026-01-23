@@ -37,7 +37,6 @@ class Ospedale{
 		void aggiungiInfermiere(Infermiere* i){infermieri.push_back(i);}
 		void aggiungiPaziente(Paziente* p){pazienti.push_back(p);}
 		
-		void statistichePazienti(); 
 		vector<Medico*> getMedici() const { return medici;  } 
 		vector<Infermiere* > getInfermieri()const {return infermieri;} 
 		list<Paziente* > getPazienti()const {return pazienti;}
@@ -58,6 +57,7 @@ class Ospedale{
 	   
 	    void stampaPazientiFiltrati() const; 
 	    
+	    Medico* findMedicoByID(const string& id);
 	    
 	    ~Ospedale();
 };

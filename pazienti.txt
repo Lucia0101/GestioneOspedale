@@ -1,0 +1,18 @@
+Massimo;Signorini;69;MSSSIGN123;Nessuna;Cardiochirurgia;20/01/2026;25/01/2026;-1
+Marco;Ferrari;35;MARFERR123;Nessuno;Ortopedia;12/05/2026;25/05/2026;-1
+Mattia;Ruffo;16;MARFFO123;Nessuna;Pediatria;29/12/2025;04/01/2026;-1
+Marta;Golia;24;MAGOL123;Penicillina;Chirurgia Estetica;18/01/2026;29/01/2026;-1
+Alessandra;Felice;69;ALSSDFLI123;Nessuna;Chirurgia Estetica;19/01/2026;25/01/2026;-1
+Giovanni;Delaini;78;GOVNDLIN123;Nessuna;Cardiochirurgia;19/01/2026;25/01/2026;-1
+Giovanna;Strazzer;88;GOVNSTZ123;Nessuna;Cardiochirurgia;19/01/2026;25/01/2026;-1
+Matteo;Corelli;35;MATCRLL123;Aspirina;Cardiochirurgia;20/01/2026;28/01/2026;-1
+Simone;Angioni;96;SMNNGN123;Nessuna;Geriatria;25/01/2026;18/02/2026;-1
+Stefano;Ferrari;8;STFFRR123;Nessuno;Pediatria;02/02/2026;23/02/2026;-1
+Emanuele;Sterpu;55;MNLSTRP123;Penicillina;Chirurgia Estetica;21/01/2026;05/02/2026;-1
+Roberto;Castellarin;29;RBTCST123;Nessuna;Chirurgia Estetica;22/01/2026;25/02/2026;-1
+Pietro;Perri;96;PTRPRR123;Nessuna;Geriatria;22/01/2026;08/02/2026;-1
+Giorgia;Furlani;28;GRGFRL123;Nessuna;Chirurgia Estetica;17/01/2026;06/02/2026;-1
+Martina;Strazzer;58;MRTSTZ123;Nessuna;Ortopedia;31/01/2026;12/02/2026;-1
+Francesco;Castellani;5;FRNCST123;Aspirina;Pediatria;22/01/2026;18/02/2026;-1
+Benedetta;Crivellaro;38;BNDCRV123;Nessuna;Ortopedia;10/08/2026;20/08/2026;-1
+Giulia;Mazzola;20;GLAMZZ123;Nessuna;Cardiochirurgia;03/02/2026;14/02/2026;-1

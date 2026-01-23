@@ -113,81 +113,149 @@ int dataToIn(string data) {
 void Ospedale::stampaPazientiFiltrati() const{
     string oggiStr = getDataAttuale(); // Prende la data di oggi: GG/MM/AAAA
     int oggi = dataToIn(oggiStr);     // Diventa AAAAMMGG
-    
-    for (auto const& element : reparti) {
-        for (auto& r : element.second) {
-            r->svuotaLetti();
-        }
-    }
-    
-    
+
 	cout << endl;
     cout << "========== (Oggi: " << oggiStr << ") ==========" << endl;
     cout << endl;
 
     //DA RICOVERARE
     cout << "*PAZIENTI CON PRENOTAZIONE*" << endl;
-    for (auto p : pazienti) {
-        if (dataToIn(p->getDataRicovero()) > oggi) {
-            p->stampaInfo();
-            cout<<endl;
-        }
+	bool trovatiPrenotati = false;
+	for (auto p : pazienti) {
+	    if (dataToIn(p->getDataRicovero()) > oggi) {
+	        p->stampaInfo();
+	        
+	        // Mostra solo operazione programmata senza esito
+	        bool operazioneTrovata = false;
+	        for(const auto& op : registroOperazioni) {
+	            if(op.getCFPaziente() == p->getCF()) {
+	                cout << "Operazione programmata: " << op.getTipo() << endl;
+	                cout << "Data prevista: " << op.getData() << endl;
+	                operazioneTrovata = true;
+	                break;
+	            }
+	        }
+	        
+	        if (!operazioneTrovata) {
+	            cout << "Nessuna operazione programmata" << endl;
+	        }
+	        
+	        cout << endl;
+	        trovatiPrenotati = true;
+	    }
+	}
+    if (!trovatiPrenotati) {
+        cout << "Nessun paziente in prenotazione." << endl;
     }
     
-    //ATTUALMENTE RICOVERATI
     cout << endl;
     cout << "*PAZIENTI RICOVERATI*" << endl;
+    bool trovatiRicoverati = false;
     for (auto p : pazienti) {
         int dRic = dataToIn(p->getDataRicovero());
         int dDim = dataToIn(p->getDataDimissioni());
         
-        // Se oggi entra il paziente
         if (dRic <= oggi && dRic != 0 && (dDim > oggi || dDim == 0 || p->getDataDimissioni() == "---")) {
-        auto rep = const_cast<Ospedale*>(this)->getReparto(p->getReparto());
-        if(rep) {
-            int stanzaAssegnata;
-            if (rep->assegnaLetto(stanzaAssegnata)) {
-                p->setStanza(stanzaAssegnata); 
+            string repartoOriginale = p->getReparto();
+            string repartoFinale = repartoOriginale;
+            
+            if (p->getEta() < 18) {
+                repartoFinale = "Pediatria";
+            } else if (p->getEta() >= 65) {
+                repartoFinale = "Geriatria";
             }
-        }
-        p->stampaInfo();
-        cout<<endl;
-        }
-    }
-
-    //DIMESSI 
-    cout << endl;
-    cout << "*PAZIENTI DIMESSI*" << endl;
-    for (auto p : pazienti) {
-        if (dataToIn(p->getDataDimissioni()) <= oggi && dataToIn(p->getDataDimissioni()) != 0) {
-            string infoOp = "Nessuna operazione registrata";
-            for(const auto& op : registroOperazioni) {
-                // Confrontiamo i Codici Fiscali
-                if(op.getCFPaziente() == p->getCF()) {
-                    infoOp = "Intervento: " + op.getTipo() + " (Data op: " + op.getData() + ")";
-                    break;
+            
+            if (p->getNumStanza() == -1) {
+                auto rep = const_cast<Ospedale*>(this)->getReparto(repartoFinale);
+                if(rep) {
+                    int stanzaAssegnata;
+                    if (rep->assegnaLetto(stanzaAssegnata)) {
+                        const_cast<Paziente*>(p)->setStanza(stanzaAssegnata);
+                    }
                 }
             }
-            p->stampaPerDimessi(infoOp);
-            cout<<endl;
+            
+            cout << "PAZIENTE: " << p->getCognome() << " " << p->getNome() 
+                 << ", CF: [" << p->getCF() << "], " << p->getEta() << " anni" << endl;
+            cout << "Data ricovero: dal " << p->getDataRicovero() 
+                 << " al " << p->getDataDimissioni() << endl;
+            cout << "Reparto: " << repartoFinale;
+            
+            // Se diverso dal reparto dell'operazione
+            if (repartoFinale != repartoOriginale) {
+                cout << " | (Operazione in: " << repartoOriginale << ")";
+            }
+            cout << endl;
+            
+            if (p->getNumStanza() != -1) {
+                cout << "Stanza: " << p->getNumStanza() << endl;
+            }
+            
+            cout << "Allergie: " << p->getAllergie() << endl;
+            
+            // Aggiungi informazioni sull'operazione
+            bool operazioneTrovata=false;
+            for(const auto& op: registroOperazioni){
+            	if(op.getCFPaziente()==p->getCF()){
+            		int dataOp=dataToIn(op.getData());
+            		if(dataOp <= oggi){
+            			cout<<"Operazione: "<<op.getTipo()<<endl;
+            			cout<<"Data operazione: "<<op.getData()<<endl;
+            			cout<<"Esito: "<<op.getEsito()<<endl;
+					}else{
+						cout<<"Operazione programmata: "<<op.getTipo()<<endl;
+						cout<<"Data prevista: "<<op.getData()<<endl;
+					}
+					operazioneTrovata=true;
+					break;
+				}
+			}
+            if(!operazioneTrovata){
+            	cout<<"Nessuna operazione registrata."<<endl;
+			}
+			cout<<endl;
+			trovatiRicoverati=true;
         }
+    }
+            
+		    if (!trovatiRicoverati) {
+		        cout << "Nessun paziente attualmente ricoverato." << endl;
+		    }
+
+    // PAZIENTI DIMESSI
+	cout << endl;
+	cout << "*PAZIENTI DIMESSI*" << endl;
+	bool trovatiDimessi = false;
+	for (auto p : pazienti) {
+	    if (dataToIn(p->getDataDimissioni()) <= oggi && dataToIn(p->getDataDimissioni()) != 0) {
+	        string infoOp = "Nessuna operazione registrata";
+	        string esitoOp = "";
+	        for(const auto& op : registroOperazioni) {
+	            if(op.getCFPaziente() == p->getCF()) {
+	                infoOp = "Operazione: " + op.getTipo() + " (Data: " + op.getData() + ")";
+	                esitoOp = op.getEsito();
+	                break;
+	            }
+	        }
+	        
+	        cout << "PAZIENTE: " << p->getCognome() << " " << p->getNome() 
+	             << ", CF: [" << p->getCF() << "]" << endl;
+	        cout << "Ricovero: " << p->getDataRicovero() 
+	             << " | Dimissione: " << p->getDataDimissioni() << endl;
+	        cout << infoOp << endl;
+	        if (!esitoOp.empty()) {
+	            cout << "Esito: " << esitoOp << endl;
+	        }
+	        cout << endl;
+	        
+	        trovatiDimessi = true;
+	    }
+	}
+    if (!trovatiDimessi) {
+        cout << "Nessun paziente dimesso." << endl;
     }
 }
 
-void Ospedale::statistichePazienti(){
-	int etaMedia=0;
-	int conteggio=pazienti.size();
-	
-	if(conteggio>0){
-		auto sommaEta = accumulate(pazienti.begin(), pazienti.end(), 0,
-            [](int somma, Paziente* p) {
-                return somma + p->getEta(); 
-            });
-		
-		etaMedia=sommaEta/conteggio;
-		cout<<"Eta' media pazienti "<<etaMedia<<" anni"<<endl;
-	}
-}
 
 Paziente& Ospedale::findCFpaziente(const string& cf){
 	auto it = find_if(pazienti.begin(), pazienti.end(),
@@ -203,9 +271,17 @@ Paziente& Ospedale::findCFpaziente(const string& cf){
 }
 
 
-
 Ospedale::~Ospedale(){
     for(auto medico : medici) delete medico;
     for(auto infermiere : infermieri) delete infermiere;
     for(auto paziente : pazienti) delete paziente;
+}
+
+Medico* Ospedale::findMedicoByID(const string& id) {
+    for (auto m : medici) {
+        if (m->getID() == id) { 
+            return m;
+        }
+    }
+    return nullptr;
 }

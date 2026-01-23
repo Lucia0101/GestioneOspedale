@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <string>
+#include <ctime>   // Per time() e localtime()
+#include <iomanip> // Per setfill e setw
+#include <sstream> // Per stringstream
 using namespace std;
 
 Operazione::Operazione(){
@@ -18,16 +21,22 @@ Operazione::Operazione(string d,string cf,string type,string e,string cu){
 	cf_paz=cf;
 	tipo=type;
 	esito=e;
-	cura=cu;	
+	cura=cu;
 }
 
 void Operazione::stampaInfo()const{
 	cout<<"Operazione: "<<tipo<<endl;
 	cout<<"Data: "<<data<<endl;
 	cout<<"Paziente CF: "<<cf_paz<<endl;
-	cout<<"Esito: "<<esito<<endl;
-	cout<<"Cura: "<<cura<<endl;
+    
+	if(esito!="" && cura!=""){
+		cout<<"Esito: "<<esito<<endl;
+		cout<<"Cura: "<<cura<<endl;
+	}
+	
+	
 }
+
 
 void Operazione::aggiungiMedico(shared_ptr<Medico> m){
 	if(teamMedico.size()>=6) throw runtime_error("Team medico completo");
@@ -38,3 +47,8 @@ void Operazione::aggiungiMedico(shared_ptr<Medico> m){
     teamMedico.push_back(m);
     m->aggiungiImpegno(this->data);
 }
+
+
+
+
+

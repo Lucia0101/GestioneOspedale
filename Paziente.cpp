@@ -7,7 +7,16 @@
 #include <ctime>   // Per time() e localtime()
 #include <iomanip> // Per setfill e setw
 #include <sstream> // Per stringstream
-using namespace std;
+
+string determinaRepartoPerEta(int eta, string repartoOperazione) {
+    if (eta < 18) {
+        return "Pediatria";
+    } else if (eta >= 65) {
+        return "Geriatria";
+    } else {
+        return repartoOperazione; // Mantiene il reparto dell'operazione
+    }
+}
 
 string getDataAttuale() {
     time_t t = time(0);
@@ -18,6 +27,8 @@ string getDataAttuale() {
        << (now->tm_year + 1900);
     return ss.str();
 }
+
+using namespace std;
 
 Paziente::Paziente(string _nome,string _cognome,int _eta ,string _cf,string _allergie,string _reparto,string _dataRicovero,string _dataDimissioni,int _numStanza):
 Persona(_nome,_cognome,_eta){
@@ -87,28 +98,40 @@ void Paziente::prestiviFarmaco(string nomeFarmaco){
     numFarmaci++;
 }
 
+
 void Paziente::stampaInfo()const{
-	if (cf.empty()) {
+    if (cf.empty()) {
         cout << "OGGETTO NON VALIDO: Questo Paziente e' stato spostato altrove." << endl;
         return;
     }
-	cout<<"PAZIENTE: "<<cognome<<" "<<nome<<", CF: ["<<cf<<"], "<<eta<<" anni"<<endl;
-    cout<<"Data ricovero: dal  "<<dataRicovero<<" al "<<dataDimissioni<<endl;
-    cout<<"Reparto: "<<reparto<<endl;
     
-    if(numStanza!=-1){
-    	cout<<"Stanza: "<<numStanza<<endl;
-	}
-	
-	cout<<"Allergie: "<<allergie<<endl;
+    // Determina il reparto finale in base all'età
+    string repartoFinale = determinaRepartoPerEta(eta, reparto);
+    
+    cout<<"PAZIENTE: "<<cognome<<" "<<nome<<", CF: ["<<cf<<"], "<<eta<<" anni"<<endl;
+    cout<<"Data ricovero: dal  "<<dataRicovero<<" al "<<dataDimissioni<<endl;
+    cout<<"Reparto assegnato (per eta): "<<repartoFinale;
+    
+    // Se il reparto è diverso da quello dell'operazione, mostra anche il reparto dell'operazione
+    if (repartoFinale != reparto) {
+        cout << " | (Operazione in: " << reparto << ")";
+    }
+    cout << endl;
+    
+    if(numStanza != -1){
+        cout<<"Stanza: "<<numStanza<<endl;
+    }
+    
+    cout<<"Allergie: "<<allergie<<endl;
     
     if (numFarmaci > 0 && listaFarmaci != nullptr) {
         cout << "Terapie prescritte: ";
         for(int i=0; i<numFarmaci; i++){
-        	cout<<listaFarmaci[i]<<", ";
-		}
-   	}
-   	cout<<endl;
+            cout<<listaFarmaci[i];
+            if(i < numFarmaci-1) cout << ", ";
+        }
+        cout << endl;
+    }
 }
 
 void Paziente::ricovera(Reparto& rep) {

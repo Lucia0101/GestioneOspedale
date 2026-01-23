@@ -38,7 +38,8 @@ class Paziente: public Persona{
 		string getDataDimissioni() const { return dataDimissioni; }
 		string getCF() const { return cf; }
 		string getAllergie()const{return allergie;}
-		
+		string getRepartoOriginale() const { return reparto; }
+				
 		void stampaPerDimessi(string infoOperazione) const;
 	
 		static void ordinaPerCognome(list<Paziente*>& pazienti);
