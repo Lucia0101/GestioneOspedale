@@ -17,11 +17,10 @@ class Medico: public Persona{
 	
 	public:
 		Medico(string _nome,string _cognome,int _eta,string _codID,string _specializzazione);
-		Medico(Medico&& m) noexcept;
 		virtual ~Medico(){};
 		
-		bool isOccupato(string data) const;
 		void aggiungiImpegno(string data);
+		bool isOccupato(string data) const;
 		void completaOperazione(Paziente* p, Operazione& op, initializer_list<string> farmaciSupporto = {});
 		
 		static void ordinaPerCognome(vector<Medico* >& medici);
