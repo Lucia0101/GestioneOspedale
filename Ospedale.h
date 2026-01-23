@@ -56,11 +56,11 @@ class Ospedale{
 	    Paziente& findCFpaziente(const string& cf);
 	   
 	    void stampaPazientiFiltrati() const; 
+	    void stampaPazientiProgrammati() const;
+	    void stampaPazientiDimessi() const;
 	    
 	    Medico* findMedicoByID(const string& id);
 	    const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }
-	    
-	    
 	    
 	    ~Ospedale();
 };
