@@ -230,10 +230,106 @@ void Ospedale::stampaPazientiFiltrati() const{
     if (!trovatiDimessi) {
         cout << "Nessun paziente dimesso oggi." << endl;
     }
-    
-    cout << "=============================================" << endl;
 }
 
+void Ospedale::stampaPazientiProgrammati() const{
+	string oggiStr = getDataAttuale();
+    int oggi = dataToIn(oggiStr);   
+    cout << "*PAZIENTI PROGRAMMATI*" << endl;
+    bool trovato = false;
+
+    for (const auto& p : pazienti) {
+        int dIn = dataToIn(p->getDataRicovero());
+
+        // Se la data di inizio è DOPO oggi, il paziente è "programmato"
+        if (dIn > oggi) {
+            cout << endl;
+            cout << "PAZIENTE: " << p->getCognome() << " " << p->getNome() 
+                 << " (" << p->getEta() << " anni)" << endl;
+            cout << "   - Reparto destinazione: " << p->getReparto() << endl;
+            cout << "   - Data Ingresso prevista: " << p->getDataRicovero() << endl;
+
+            // Cerchiamo se ha un'operazione programmata
+            bool operazioneTrovata = false;
+            for(const auto& op : registroOperazioni) {
+                if(op.getCFPaziente() == p->getCF()) {
+                    int dataOp = dataToIn(op.getData());
+                    if(dataOp <= oggi) {
+                        // Operazione già effettuata
+                        cout << "Operazione: " << op.getTipo() << endl;
+                        cout << "Data operazione: " << op.getData() << endl;
+                        cout << "Esito: " << op.getEsito() << endl;
+                    } else {
+                        // Operazione programmata
+                        cout << "Operazione programmata: " << op.getTipo() << endl;
+                        cout << "Data prevista: " << op.getData() << endl;
+                    }
+                    operazioneTrovata = true;
+                    break;
+                }
+            }
+            
+            if(!operazioneTrovata) {
+                cout << "Nessuna operazione registrata." << endl;
+            }
+            
+            // Stampa terapie se presenti
+            p->stampaTerapie();
+            
+            cout << endl;
+        	}
+    	}
+}
+
+void Ospedale::stampaPazientiDimessi() const{
+    string oggiStr = getDataAttuale();
+    int oggi = dataToIn(oggiStr);
+
+    cout << endl << "*STORICO PAZIENTI DIMESSI*" << endl;
+    bool trovato = false;
+
+    for (const auto& p : pazienti) {
+        int dOut = dataToIn(p->getDataDimissioni());
+
+        // Un paziente è "Dimesso" (Storico) se la data fine è passata ed è valida (!= 0)
+        if (dOut != 0 && dOut < oggi) {
+            cout << endl;
+            cout << "PAZIENTE: " << p->getCognome() << " " << p->getNome() << " (CF: " << p->getCF() << ")" << endl;
+            cout << "   - Periodo: dal " << p->getDataRicovero() << " al " << p->getDataDimissioni() << endl;
+            cout << "   - Reparto: " << p->getReparto() << endl;
+            cout << "   - Allergie: " << p->getAllergie() << endl;
+
+            // Cerchiamo lo storico dell'operazione
+            bool operazioneTrovata = false;
+            for(const auto& op : registroOperazioni) {
+                if(op.getCFPaziente() == p->getCF()) {
+                    int dataOp = dataToIn(op.getData());
+                    if(dataOp <= oggi) {
+                        // Operazione già effettuata
+                        cout << "Operazione: " << op.getTipo() << endl;
+                        cout << "Data operazione: " << op.getData() << endl;
+                        cout << "Esito: " << op.getEsito() << endl;
+                    } else {
+                        // Operazione programmata
+                        cout << "Operazione programmata: " << op.getTipo() << endl;
+                        cout << "Data prevista: " << op.getData() << endl;
+                    }
+                    operazioneTrovata = true;
+                    break;
+                }
+            }
+            
+            if(!operazioneTrovata) {
+                cout << "Nessuna operazione registrata." << endl;
+            }
+            
+            // Stampa terapie se presenti
+            p->stampaTerapie();
+            
+            cout << endl;
+            }
+	}
+}
 
 Paziente& Ospedale::findCFpaziente(const string& cf){
 	auto it = find_if(pazienti.begin(), pazienti.end(),
@@ -254,6 +350,7 @@ Ospedale::~Ospedale(){
     for(auto infermiere : infermieri) delete infermiere;
     for(auto paziente : pazienti) delete paziente;
 }
+
 
 Medico* Ospedale::findMedicoByID(const string& id) {
     for (auto m : medici) {
