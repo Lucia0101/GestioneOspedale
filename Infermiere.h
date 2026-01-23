@@ -20,10 +20,6 @@ class Infermiere: public Persona{
 		static void ordinaPerCognome(vector<Infermiere* >& infermieri);
 		virtual void stampaInfo()const;
 		
-		Infermiere(const Infermiere& i);
-    	Infermiere(Infermiere&& i) noexcept;
-
 };
 
 #endif
-
