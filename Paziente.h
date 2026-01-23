@@ -21,19 +21,20 @@ class Paziente: public Persona{
 	
 	public:
 		Paziente(string _nome,string _cognome,int _eta,string _cf,string _allergie,string _reparto,string dataRicovero,string _dataDimissioni,int _numStanza);
-		virtual ~Paziente();
-		
-		virtual void stampaInfo()const;
-		void stampaTerapie() const;  // Aggiunto
-		
 		Paziente(const Paziente& paz); //costruttore copia
 		Paziente(Paziente&& paz) noexcept; //move semantics
 		void prestiviFarmaco(string nomeFarmaco); //per aggiungere un farmaco
+		virtual ~Paziente();
+		
+		void stampaTerapie() const; 
+		virtual void stampaInfo()const;
+		
 		void ricovera(Reparto& rep);
 		void dimetti(Reparto& rep);
+		void stampaPerDimessi(string infoOperazione) const;
+		static void ordinaPerCognome(list<Paziente*>& pazienti);
 		
 		string getReparto() const { return reparto; }
-		
 		int getNumStanza() const { return numStanza; }
 		string getDataRicovero() const { return dataRicovero; }
 		string getDataDimissioni() const { return dataDimissioni; }
@@ -41,10 +42,6 @@ class Paziente: public Persona{
 		string getAllergie()const{return allergie;}
 		string getRepartoOriginale() const { return reparto; }
 				
-		void stampaPerDimessi(string infoOperazione) const;
-	
-		static void ordinaPerCognome(list<Paziente*>& pazienti);
-		
 		//INTERAZIONE UTENTE
 		void setNome(const string& nuovoNome) { nome = nuovoNome; }
 	    void setCognome(const string& nuovoCognome) { cognome = nuovoCognome; }
