@@ -14,21 +14,20 @@ string getDataAttuale();
 
 class Paziente: public Persona{
 	private: 
-		string allergie,cf,reparto,dataRicovero,dataDimissioni;
+		string allergie, cf, reparto, dataRicovero, dataDimissioni;
 		int numStanza;
 		string* listaFarmaci;
 		int numFarmaci;
 	
 	public:
 		Paziente(string _nome,string _cognome,int _eta,string _cf,string _allergie,string _reparto,string dataRicovero,string _dataDimissioni,int _numStanza);
-		Paziente(const Paziente& paz); //costruttore copia
-		Paziente(Paziente&& paz) noexcept; //move semantics
-		void prestiviFarmaco(string nomeFarmaco); //per aggiungere un farmaco
+		Paziente(const Paziente& paz); 
+		Paziente(Paziente&& paz) noexcept; 
 		virtual ~Paziente();
 		
-		void stampaTerapie() const; 
 		virtual void stampaInfo()const;
-		
+		void stampaTerapie() const; 
+		void prestiviFarmaco(string nomeFarmaco); 
 		void ricovera(Reparto& rep);
 		void dimetti(Reparto& rep);
 		void stampaPerDimessi(string infoOperazione) const;
@@ -41,8 +40,7 @@ class Paziente: public Persona{
 		string getCF() const { return cf; }
 		string getAllergie()const{return allergie;}
 		string getRepartoOriginale() const { return reparto; }
-				
-		//INTERAZIONE UTENTE
+
 		void setNome(const string& nuovoNome) { nome = nuovoNome; }
 	    void setCognome(const string& nuovoCognome) { cognome = nuovoCognome; }
 	    void setEta(int nuovaEta) { eta = nuovaEta; }
@@ -50,4 +48,5 @@ class Paziente: public Persona{
 	    void setStanza(int nuovaStanza) { numStanza = nuovaStanza; }
 	   
 };
+
 #endif

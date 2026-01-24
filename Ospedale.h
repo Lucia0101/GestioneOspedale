@@ -29,6 +29,7 @@ class Ospedale{
 	public:
 		Ospedale();
 	    Ospedale(string n);
+	    ~Ospedale();
 	
 		void aggiungiMedico(Medico* m){medici.push_back(m);}
 		void aggiungiInfermiere(Infermiere* i){infermieri.push_back(i);}
@@ -37,11 +38,14 @@ class Ospedale{
 		vector<Medico*> getMedici() const { return medici;  } 
 		vector<Infermiere* > getInfermieri()const {return infermieri;} 
 		list<Paziente* > getPazienti()const {return pazienti;}
+		const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }
+		
+		shared_ptr<Reparto> getReparto(string nomeReparto);
+		list<Paziente*> getPazientiProgrammati()const;
+	    list<Paziente*> getPazientiDimessi()const;
 	
 	    void aggiungiReparto(shared_ptr<Reparto> r);
 	    void aggiungiOperazione(const Operazione& op);
-	    
-	    shared_ptr<Reparto> getReparto(string nomeReparto);
 	    
 	    void stampaDati()const;
 	    void stampaReparti()const;
@@ -49,19 +53,10 @@ class Ospedale{
 	    void stampaMediciOrdinati(); 
 	    void stampaInfermieriOrdinati();
 	    void stampaPazientiOrdinati();
+	    void stampaPazientiFiltrati() const;
 	    
 	    Paziente& findCFpaziente(const string& cf);
-	   
-	    void stampaPazientiFiltrati() const; 
-	    
-	    // Aggiunte queste due funzioni che restituiscono liste di pazienti filtrati
-	    list<Paziente*> getPazientiProgrammati() const;
-	    list<Paziente*> getPazientiDimessi() const;
-	    
 	    Medico* findMedicoByID(const string& id);
-	    const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }
-	    
-	    ~Ospedale();
 };
 
 #endif

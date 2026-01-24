@@ -7,8 +7,10 @@
 #include <algorithm>
 using namespace std;
 
+//template per stampa in ordine di cognome di un contenitore
 template<typename Contenitore>
 void stampaPerCognome(const Contenitore& container,const string& titolo) { 
+	//ricava tipo di dato
     using TipoPuntatore=typename Contenitore::value_type;
     
     vector<TipoPuntatore> copiaOrdinata;
@@ -17,6 +19,7 @@ void stampaPerCognome(const Contenitore& container,const string& titolo) {
         copiaOrdinata.push_back(elem);
     }
     
+    //funzione lambda per confronto dei cognomi
     sort(copiaOrdinata.begin(),copiaOrdinata.end(),
         [](TipoPuntatore a, TipoPuntatore b){
             return a->getCognome() < b->getCognome();
@@ -30,7 +33,7 @@ void stampaPerCognome(const Contenitore& container,const string& titolo) {
     }
 }
 
-//specializzazione per list<Paziente*> perché uso list (sort è diverso in list)
+//specializzazione di stampa per list<Paziente*> perché uso list 
 template<>
 void inline stampaPerCognome<list<Paziente*>>(const list<Paziente*>& container,const string& titolo) {
     //crea una copia ordinabile
@@ -41,7 +44,6 @@ void inline stampaPerCognome<list<Paziente*>>(const list<Paziente*>& container,c
         return a->getCognome() < b->getCognome();
     });
     
-    //stampa il titolo
 	cout<<"\n"<<titolo<<endl;
     
     //stampa gli elementi ordinati

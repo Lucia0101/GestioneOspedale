@@ -17,18 +17,16 @@ class Medico: public Persona{
 	
 	public:
 		Medico(string _nome,string _cognome,int _eta,string _codID,string _specializzazione);
-		virtual ~Medico(){};
-		
-		void aggiungiImpegno(string data);
-		bool isOccupato(string data) const;
-		void completaOperazione(Paziente* p, Operazione& op, initializer_list<string> farmaciSupporto = {});
-		
-		static void ordinaPerCognome(vector<Medico* >& medici);
-		
-		virtual void stampaInfo() const;
+		virtual ~Medico();
 		
 		string getID()const{return codID;}	
 		string getSpecializzazione() const { return specializzazione; }	
+		
+		virtual void stampaInfo() const;
+		void aggiungiImpegno(string data);
+		bool isOccupato(string data) const;
+		void completaOperazione(Paziente* p, Operazione& op, initializer_list<string> farmaciSupporto = {});
+		static void ordinaPerCognome(vector<Medico* >& medici);
 };
 
 #endif

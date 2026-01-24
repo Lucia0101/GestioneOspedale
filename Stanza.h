@@ -14,19 +14,18 @@ class Stanza{
 	public:
 		Stanza();
 		Stanza(int stanza,int letti,string rep);
+		~Stanza();
 		
 		int getNumStanza()const{return numStanza;}
 		
 		bool isPiena() const{return lettiOccupati >= numLetti;};
 		bool isVuota() const{return lettiOccupati == 0;};
 		
-		void occupaLetto(); //incrementa letti occupati
-		void liberaLetto(); //decrementa letti occupato
+		void occupaLetto(); 
+		void liberaLetto(); 
 		void azzeraLetti() { lettiOccupati = 0; }
 		
-		void stampaDettagli() const; 
-				
-		~Stanza(){}
+		void stampaDettagli() const; 		
 };
 
 

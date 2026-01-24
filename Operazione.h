@@ -15,24 +15,20 @@ class Operazione{
 		string tipo;
 		string esito;
 		string cura;
-		//vector<shared_ptr<Medico>> teamMedico;
 	
 	public:
 		Operazione();
 		Operazione(string d,string cf,string typ,string cu);
+		~Operazione();
+		
 		string getData() const { return data; }
 		string getCFPaziente() const { return cf_paz; }
 		string getTipo() const { return tipo; }
 		string getEsito()const{return esito;}
+		string getCura() const { return cura; }
 		
 		void stampaInfo()const;
 		void aggiungiMedico(shared_ptr<Medico> m);
-		
-		string getCura() const { return cura; }
-		
-		~Operazione(){}
-	
 };
-
 
 #endif

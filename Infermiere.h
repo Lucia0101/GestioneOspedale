@@ -15,10 +15,12 @@ class Infermiere: public Persona{
 	
 	public:
 		Infermiere(string _nome,string _cognome,int _eta,string _codID,string _reparto,string _turno);
-		virtual ~Infermiere(){};
+		virtual ~Infermiere();
+		
 		string getReparto() const { return reparto; }
-		static void ordinaPerCognome(vector<Infermiere* >& infermieri);
+		
 		virtual void stampaInfo()const;
+		static void ordinaPerCognome(vector<Infermiere* >& infermieri);
 		
 };
 

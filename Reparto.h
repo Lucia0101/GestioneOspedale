@@ -28,6 +28,7 @@ class Reparto{
 	public:
 		Reparto();
 		Reparto(string n, int numM, int numInf, int numStanz, int letStanz, string spec);
+		~Reparto();
 		
 		string getNome() const { return nome; }
 		string getSpecializzazione() const { return specializzazione; }
@@ -36,11 +37,9 @@ class Reparto{
 		void liberaLetto(int numeroStanza);
 		void svuotaLetti();
 		
-		// Funzioni separate per stampa
 		void stampaNome() const;
 		void stampaLetti() const;
 		void stampaDettagli() const; 
-		
-		~Reparto(){}
 };
+
 #endif

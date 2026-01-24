@@ -8,6 +8,7 @@
 #include <chrono>
 using namespace std;
 
+//costruttore di default
 Reparto::Reparto() {
     nome = "";
     numMedici = 0;
@@ -16,13 +17,14 @@ Reparto::Reparto() {
     lettiPerStanza = 2;
     specializzazione = "";
     numLettiOccupati = 0;
-    numLettiLiberi = numStanze * lettiPerStanza;
+    
+	numLettiLiberi = numStanze * lettiPerStanza;
     for(int i = 1; i <= numStanze; i++) {
         stanze.push_back(Stanza(i, lettiPerStanza, nome));
     }
 }
 
-
+//costruttore specifico
 Reparto::Reparto(string n, int numM, int numInf, int numStanz, int letStanz, string spec)
     : nome(move(n)), 
       numMedici(numM), 
@@ -38,7 +40,10 @@ Reparto::Reparto(string n, int numM, int numInf, int numStanz, int letStanz, str
     }
 }
 
+//distruttore
+Reparto::~Reparto(){}
 
+//metodo per assegnazione del letto
 bool Reparto::assegnaLetto(int& stanzaAssegnata) {
     lock_guard<mutex> lock(mtx); 
     for(auto& stanza : stanze) {
@@ -56,7 +61,7 @@ bool Reparto::assegnaLetto(int& stanzaAssegnata) {
     return false; 
 }
 
-
+//metodo per aggiunta letto libero
 void Reparto::liberaLetto(int numeroStanza) {
     lock_guard<mutex> lock(mtx);
     
@@ -71,7 +76,7 @@ void Reparto::liberaLetto(int numeroStanza) {
     }
 }
 
-
+//metodo per liberare i letti
 void Reparto::svuotaLetti() {
     lock_guard<mutex> lock(mtx);
     numLettiOccupati = 0;
@@ -81,13 +86,13 @@ void Reparto::svuotaLetti() {
     }
 }
 
-
+//metodo per stampa nome del reparto e specializzazione
 void Reparto::stampaNome() const {
     lock_guard<mutex> lock(mtx);
     cout << "REPARTO: " << nome << " (" << specializzazione << ")" << endl;
 }
 
-
+//metodo per stampa letti
 void Reparto::stampaLetti() const {
     lock_guard<mutex> lock(mtx);
     cout << "[Letti totali: " << numLettiLiberi + numLettiOccupati 
@@ -99,7 +104,7 @@ void Reparto::stampaLetti() const {
     }
 }
 
-
+//metodo per stampare nome e letti del reparto
 void Reparto::stampaDettagli() const {
     stampaNome();
     stampaLetti();

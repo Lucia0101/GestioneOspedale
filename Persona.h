@@ -13,20 +13,18 @@ class Persona{
 	
 	public:
 		Persona(string _nome,string _cognome,int _eta); 
-    	Persona(const Persona& p) : nome(p.nome), cognome(p.cognome), eta(p.eta) {}
-    	Persona(Persona&& p) noexcept : nome(move(p.nome)), cognome(move(p.cognome)), eta(p.eta){p.eta = 0;}
- 
-		virtual ~Persona(){};
-				
+    	Persona(const Persona& p);
+    	Persona(Persona&& p) noexcept;
+		virtual ~Persona();
+		
+		virtual void stampaInfo()const;
 		friend ostream& operator << (ostream& os,const Persona& p);
+		
 		string getNome() const { return nome; }
         string getCognome() const { return cognome; }
         int getEta()const {return eta;}
-		
-		virtual void stampaInfo()const;
+				
 };
 
 
 #endif
-
-

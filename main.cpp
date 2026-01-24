@@ -38,7 +38,7 @@ void stampaSituazioneOspedale(Ospedale& osp);
 
 
 int main(int argc, char** argv) {
-    Ospedale osp("*OSPEDALE PROGRAMMAZIONE AVANZATA*");
+    Ospedale osp("OSPEDALE PROGRAMMAZIONE AVANZATA");
 
     try{
         cout<<"--- CARICAMENTO DATI ---"<<endl;
@@ -58,9 +58,10 @@ int main(int argc, char** argv) {
         cout<<"Operazioni simulate."<<endl;
 
     }catch(const exception& e){
-        cerr<<"Errore critico durante il caricamento: "<<e.what()<<endl;
+        cout<<"Errore critico durante il caricamento: "<<e.what()<<endl;
         return 1;
     }
+	
 	
 	system("pause");
 	
@@ -70,7 +71,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
+//simulazione di due operazioni simultanee
 void simulaThreadOperazioni(Ospedale& osp) {
     cout << "\n=== SIMULAZIONE THREAD: OPERAZIONI SIMULTANEE ===" << endl;
     
@@ -79,7 +80,7 @@ void simulaThreadOperazioni(Ospedale& osp) {
     
     //funzione per stampare con mutex
     auto stampaSicura = [&mtx](const string& msg) {
-        lock_guard<mutex> lock(mtx);
+    	lock_guard<mutex> lock(mtx);
         cout << msg << endl;
     };
     
@@ -89,11 +90,9 @@ void simulaThreadOperazioni(Ospedale& osp) {
         this_thread::sleep_for(chrono::seconds(3)); 
         stampaSicura("[THREAD 1] Bypass cardiaco completato con successo!");
         
-        //aggiungi l'operazione al registro
+        //aggiunge l'operazione al registro
         try {
-            Operazione op(getDataAttuale(), "MSSSIGN123", 
-                         "Bypass cardiaco (simulato)",
-                         "Monitoraggio cardiaco");
+            Operazione op(getDataAttuale(), "MSSSIGN123","Bypass cardiaco (simulato)","Monitoraggio cardiaco");
             osp.aggiungiOperazione(op);
         } catch (const exception& e) {
             stampaSicura(string("[THREAD 1] Errore: ") + e.what());
@@ -106,24 +105,21 @@ void simulaThreadOperazioni(Ospedale& osp) {
         this_thread::sleep_for(chrono::seconds(2)); 
         stampaSicura("[THREAD 2] Frattura ridotta con successo!");
         
-        //aggiungi operazione al registro
+        //aggiunge l'operazione al registro
         try {
-            Operazione op(getDataAttuale(), "MARFERR123", 
-                         "Riduzione frattura scomposta (simulato)", 
-                         "Fisioterapia");
+            Operazione op(getDataAttuale(), "MARFERR123", "Riduzione frattura scomposta (simulato)", "Fisioterapia");
             osp.aggiungiOperazione(op);
         } catch (const exception& e) {
             stampaSicura(string("[THREAD 2] Errore: ") + e.what());
         }
     };
     
-    // Crea i thread
+    //creazione dei thread
     thread thread1(operazioneCardio);
     thread thread2(operazioneOrtopedia);
     
     stampaSicura("[MAIN] Thread avviati - operazioni in corso simultaneamente...");
     
-    // Attendi il completamento
     thread1.join();
     thread2.join();
     
@@ -132,7 +128,7 @@ void simulaThreadOperazioni(Ospedale& osp) {
 }
 
 
-//CARICA MEDICI
+//caricamento i medici
 void caricaMedici(Ospedale& osp,const string& filename){
     ifstream file(filename);
     if(!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
@@ -143,6 +139,7 @@ void caricaMedici(Ospedale& osp,const string& filename){
         stringstream ss(linea);
         string nome,cognome,etaStr,id,spec;
         
+        //nel csv ogni parametro è diviso con ;
         getline(ss, nome, ';');
         getline(ss, cognome, ';');
         getline(ss, etaStr, ';');
@@ -154,7 +151,7 @@ void caricaMedici(Ospedale& osp,const string& filename){
     file.close();
 }
 
-//CARICA INFERMIERI
+//carica gli infermieri
 void caricaInfermieri(Ospedale& osp,const string& filename){
     ifstream file(filename);
     if(!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
@@ -165,6 +162,7 @@ void caricaInfermieri(Ospedale& osp,const string& filename){
         stringstream ss(linea);
         string nome,cognome,etaStr,id,rep,turno;
         
+        //nel csv ogni parametro è diviso con ;
         getline(ss,nome,';');
         getline(ss,cognome,';');
         getline(ss,etaStr,';');
@@ -177,7 +175,7 @@ void caricaInfermieri(Ospedale& osp,const string& filename){
     file.close();
 }
 
-//CARICA PAZIENTI
+//carica i pazienti
 void caricaPazienti(Ospedale& osp,const string& filename){
     ifstream file(filename);
     if(!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
@@ -188,6 +186,7 @@ void caricaPazienti(Ospedale& osp,const string& filename){
         stringstream ss(linea);
         string nome,cognome,etaStr,cf,allergie,reparto,dRic,dDim;
         
+        //nel csv ogni parametro è diviso con ;
         getline(ss,nome,';');
         getline(ss,cognome,';');
         getline(ss,etaStr,';');
@@ -200,20 +199,20 @@ void caricaPazienti(Ospedale& osp,const string& filename){
         Paziente* p=new Paziente(nome,cognome,stoi(etaStr),cf,allergie,reparto,dRic,dDim,-1);
         osp.aggiungiPaziente(p);
         
-        // Tenta il ricovero automatico nel reparto corretto
+        //ricovero automatico nel reparto corretto
         try {
             auto repPtr=osp.getReparto(reparto);
             if(repPtr){
                 p->ricovera(*repPtr);
             }
         } catch (...) {
-            // Ignora errori di reparto non trovato
+            //ignora errori di reparto non trovato
         }
     }
     file.close();
 }
 
-//CARICA OPERAZIONI
+//carica le operazioni
 void caricaOperazioni(Ospedale& osp,const string& filename) {
     ifstream file(filename);
     if(!file.is_open()) throw runtime_error("Impossibile aprire " + filename);
@@ -224,54 +223,52 @@ void caricaOperazioni(Ospedale& osp,const string& filename) {
         stringstream ss(linea);
         string data, cf, tipo, esito, cura;
         
+        //nel csv ogni parametro è diviso con ;
         getline(ss,data,';');
         getline(ss,cf,';');
         getline(ss,tipo,';');
         getline(ss,esito,';');
         getline(ss,cura,';');
         
-        //Creare l'operazione
         Operazione op(data,cf,tipo,cura);
         
-        //Cercare il paziente e assegnare farmaci se necessario
+        //cerco il paziente e assegno i farmaci se è necessario
         try{
             Paziente& paziente=osp.findCFpaziente(cf);
             
-            //Assegna automaticamente la cura principale
+            //assegna automaticamente la cura principale
             if(!cura.empty()){
                 paziente.prestiviFarmaco(cura);
             }
             
-            //Aggiungi l'operazione all'ospedale
             osp.aggiungiOperazione(op);
             
         }catch(const exception& e){
-            cerr<<"Attenzione: Paziente con CF "<<cf<<" non trovato per l'operazione del "<<data<<endl;
-            // Carica comunque l'operazione senza assegnare farmaci
+            cout<<"Attenzione: Paziente con CF "<<cf<<" non trovato per l'operazione del "<<data<<endl;
             osp.aggiungiOperazione(op);
         }
     }
     file.close();
 }
 
+//simulazione operazioni per popolazione dell'ospedale
 void simulaOperazioni(Ospedale& osp){
     cout<<endl;
     cout<<"--- SIMULAZIONE INTERVENTI CHIRURGICI ---"<<endl;
     
-    // OPERAZIONE 1: Cardiochirurgia (SOLO SE NON ESISTE GIÀ)
+    //operazione 1: cardiochirurgia
     try{
-        // Controlla se questa operazione esiste già
+        //controlla se questa operazione esiste già
         Paziente& paziente=osp.findCFpaziente("ALFSIGN123");
-        // Se trovato, non aggiungere duplicato
         cout << " [INFO] Paziente Signorini trovato, operazione bypass gia' nel file operazioni.txt" << endl;
     }catch(const exception& e){
-        // Paziente non trovato, procedi con la simulazione
+        //paziente non trovato, quindi procedo con la simulazione
         try{
             Medico* capoEquipe=osp.findMedicoByID("M001");
             Medico* assistente=osp.findMedicoByID("M006");
             Paziente& paziente=osp.findCFpaziente("ALFSIGN123");
 
-            if(capoEquipe&&assistente){
+            if(capoEquipe && assistente){
                 Operazione op("21/01/2026","ALFSIGN123","Bypass cardiaco","Monitoraggio intensivo");
 
                 shared_ptr<Medico> sp1(capoEquipe, [](Medico*){});
@@ -286,17 +283,16 @@ void simulaOperazioni(Ospedale& osp){
                 cout<<" [OK] Bypass cardiaco registrato per paziente Signorini."<<endl;
             }
         }catch(const exception& e){
-            cerr<<"[ERR] Operazione 1 fallita: "<<e.what()<<endl;
+            cout<<"[ERR] Operazione 1 fallita: "<<e.what()<<endl;
         }
     }
 
-    // OPERAZIONE 2: Ortopedia (SOLO SE NON ESISTE GIÀ)
+    //operazione 2: ortopedia
     try{
-        // Controlla se esiste già
         Paziente& paziente=osp.findCFpaziente("MARFERR123");
         cout << " [INFO] Paziente Ferrari trovato, operazione frattura gia' nel file operazioni.txt" << endl;
     }catch(...){
-        // Continua solo se non esiste
+
         try{
             Medico* ortopedico = osp.findMedicoByID("M002");
             Paziente& paziente = osp.findCFpaziente("MARFERR123");
@@ -313,16 +309,17 @@ void simulaOperazioni(Ospedale& osp){
                 cout << " [OK] Intervento frattura registrato per paziente Ferrari." << endl;
             }
         } catch (const exception& e) {
-            cerr << " [ERR] Operazione 2 fallita: " << e.what() << endl;
+            cout << " [ERR] Operazione 2 fallita: " << e.what() << endl;
         }
     }
 
-    // OPERAZIONE 3: Chirurgia Estetica (SOLO SE NON ESISTE GIÀ)
+    //operazione 3: chirurgia estetica 
     try{
         Paziente& paziente=osp.findCFpaziente("MAGOL123");
         cout << " [INFO] Paziente Golia trovato, rinoplastica gia' nel file operazioni.txt" << endl;
     }catch(...){
-        try {
+        
+		try {
             Medico* chirurgo = osp.findMedicoByID("M003");
             Paziente& paziente = osp.findCFpaziente("MAGOL123");
 
@@ -338,11 +335,11 @@ void simulaOperazioni(Ospedale& osp){
                 cout << " [OK] Rinoplastica registrata per paziente Golia." << endl;
             }
         } catch (const exception& e) {
-            cerr << " [ERR] Operazione 3 fallita: " << e.what() << endl;
+            cout << " [ERR] Operazione 3 fallita: " << e.what() << endl;
         }
     }
 
-    //OPERAZIONE 4: Test errore
+    //operazione 4: test errore
     try {
         Paziente& paziente = osp.findCFpaziente("NONESISTE123");
     } catch (const exception& e) {
@@ -350,13 +347,14 @@ void simulaOperazioni(Ospedale& osp){
     }
 }
 
-//FUNZIONI DEL MENU
+//stampa dati generali dell'ospedale
 void stampaSituazioneOspedale(Ospedale& osp) {
     cout << "\n--- SITUAZIONE OSPEDALE ---" << endl;
     osp.stampaDati();
     cout << endl;
 }
 
+//visualizzazione e funzionalità menu
 void menu(Ospedale& osp) {
     int scelta;
     char continua;
@@ -381,7 +379,7 @@ void menu(Ospedale& osp) {
         cout << "========================================" << endl;
         cout << "Scegli un'opzione (1-9): ";
         
-        // Controllo input
+        //controllo dell'input
         if (!(cin >> scelta)) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -390,8 +388,10 @@ void menu(Ospedale& osp) {
             continue;
         }
         
-        cin.ignore(); // Pulisce il buffer
+        //pulisce il buffer
+        cin.ignore(); 
         
+        //costrutto di condizione per il menù
         switch(scelta) {
             case 1:
                 visualizzaMedici(osp);
@@ -442,6 +442,7 @@ void menu(Ospedale& osp) {
     } while (true);
 }
 
+//visualizza lista medici
 void visualizzaMedici(Ospedale& osp) {
     system("cls"); 
     
@@ -456,6 +457,7 @@ void visualizzaMedici(Ospedale& osp) {
     system("pause");
 }
 
+//visualizza lista infermieri
 void visualizzaInfermieri(Ospedale& osp) {
     system("cls");
     
@@ -469,6 +471,7 @@ void visualizzaInfermieri(Ospedale& osp) {
     system("pause");
 }
 
+//visualizza lista pazienti
 void visualizzaPazienti(Ospedale& osp) {
     system("cls");
     
@@ -493,6 +496,7 @@ void visualizzaPazienti(Ospedale& osp) {
     system("pause");
 }
 
+//ricerca per cf e modifica dati del paziente
 void ricercaModificaPaziente(Ospedale& osp) {
     string cf;
     cout << "\nInserisci il codice fiscale del paziente: ";
@@ -563,11 +567,12 @@ void ricercaModificaPaziente(Ospedale& osp) {
         }
         
     } catch(const exception& e) {
-        cerr << "\n>>> ERRORE: " << e.what() << endl;
-        cerr << "Codice fiscale non trovato nel sistema." << endl;
+        cout << "\n>>> ERRORE: " << e.what() << endl;
+        cout << "Codice fiscale non trovato nel sistema." << endl;
     }
 }
 
+//visualizzazione report giornaliero
 void reportGiornaliero(Ospedale& osp) {
     system("cls");
     
@@ -577,6 +582,7 @@ void reportGiornaliero(Ospedale& osp) {
     system("pause");
 }
 
+//visualizzazione pazienti con prenotazione ma non ricoverati
 void pazientiProgrammati(Ospedale& osp){
     system("cls");
     
@@ -585,20 +591,17 @@ void pazientiProgrammati(Ospedale& osp){
     cout << "          LISTA PAZIENTI PROGRAMMATI" << endl;
     cout << "===============================================" << endl;
     
-    // Ottieni la lista dei pazienti programmati
     list<Paziente*> pazientiProg = osp.getPazientiProgrammati();
     
-    // Usa il template per stampare in ordine di cognome
     if (pazientiProg.empty()) {
         cout << "Nessun paziente programmato." << endl;
     } else {
-        // Chiama esplicitamente la specializzazione per list<Paziente*>
         stampaPerCognome<list<Paziente*>>(pazientiProg, "");
     }
     
     cout << "\n========================================" << endl;
     
-    // Ricerca paziente se ci sono pazienti
+    //ricerca del paziente se ci sono dei pazienti
     if (!pazientiProg.empty()) {
         char scelta;
         cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
@@ -610,11 +613,12 @@ void pazientiProgrammati(Ospedale& osp){
         }
     }
     
-    cout << endl; // A capo prima del "premi un tasto"
+    cout << endl;
     cout << "========================================" << endl;
     system("pause");
 }
 
+//visualizzazione pazienti dimessi
 void pazientiDimessi(Ospedale& osp){
     system("cls");
     
@@ -623,20 +627,16 @@ void pazientiDimessi(Ospedale& osp){
     cout << "          LISTA PAZIENTI DIMESSI" << endl;
     cout << "===============================================" << endl;
     
-    // Ottieni la lista dei pazienti dimessi
     list<Paziente*> pazientiDim = osp.getPazientiDimessi();
     
-    // Usa il template per stampare in ordine di cognome
     if (pazientiDim.empty()) {
         cout << "Nessun paziente dimesso (storico)." << endl;
     } else {
-        // Chiama esplicitamente la specializzazione per list<Paziente*>
         stampaPerCognome<list<Paziente*>>(pazientiDim, "");
     }
     
     cout << "\n========================================" << endl;
     
-    // Ricerca paziente se ci sono pazienti
     if (!pazientiDim.empty()) {
         char scelta;
         cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
@@ -648,12 +648,12 @@ void pazientiDimessi(Ospedale& osp){
         }
     }
     
-    cout << endl; // A capo prima del "premi un tasto"
+    cout << endl; 
     cout << "========================================" << endl;
     system("pause");
 }
 
-
+//visualizzazione dei reparti
 void visualizzaReparti(Ospedale& osp) {
     system("cls");
     
@@ -675,10 +675,10 @@ void visualizzaReparti(Ospedale& osp) {
     
     system("cls");
     
-    // Dichiaro repartiNomi fuori dallo switch
     string repartiNomi[] = {"Cardiochirurgia", "Chirurgia Estetica", "Ortopedia", "Pediatria", "Geriatria"};
     string nomeReparto;
     
+    //costrutto switch per scelta del reparto
     switch(scelta) {
         case 1:
             nomeReparto = "Cardiochirurgia";
@@ -696,7 +696,6 @@ void visualizzaReparti(Ospedale& osp) {
             nomeReparto = "Geriatria";
             break;
         case 6:
-            // Per tutti i reparti
             cout << "\n========================================" << endl;
             cout << "           TUTTI I REPARTI" << endl;
             cout << "========================================" << endl;
@@ -706,14 +705,14 @@ void visualizzaReparti(Ospedale& osp) {
                 cout << "REPARTO: " << repartiNomi[idx] << endl;
                 cout << "----------------------------------------" << endl;
                 
-                // Stampa nome reparto
+                //stampa il nome reparto
                 auto repartiMap = osp.getReparti();
                 auto it = repartiMap.find(repartiNomi[idx]);
                 if (it != repartiMap.end() && !it->second.empty()) {
                     shared_ptr<Reparto> rep = it->second[0];
                     rep->stampaNome();
                     
-                    // Conta medici e infermieri
+                    //conta i medici 
                     int countMedici = 0;
                     auto mediciOsp = osp.getMedici();
                     for (auto m : mediciOsp) {
@@ -722,6 +721,7 @@ void visualizzaReparti(Ospedale& osp) {
                         }
                     }
                     
+                    //conta gli infermieri
                     int countInfermieri = 0;
                     auto infermieriOsp = osp.getInfermieri();
                     for (auto infermiere : infermieriOsp) {
@@ -730,18 +730,16 @@ void visualizzaReparti(Ospedale& osp) {
                         }
                     }
                     
-                    // Stampa staff
-                    cout << "[Staff medico: " << countMedici << " medici] | "
-                         << "[Staff infermieri: " << countInfermieri << " infermieri]" << endl;
+                    cout << "[Staff medico: " << countMedici << " medici] | " << "[Staff infermieri: " << countInfermieri << " infermieri]" << endl;
                     
-                    // Stampa dettagli letti e stanze
+                    //stampa letti
                     rep->stampaLetti();
                     
                 } else {
                     cout << "Reparto non trovato!" << endl;
                 }
                 
-                // Stampa elenco medici
+                //stampa elenco medici
                 cout << "\nELENCO MEDICI:" << endl;
                 cout << "----------------------------------------" << endl;
                 auto mediciOsp = osp.getMedici();
@@ -757,7 +755,7 @@ void visualizzaReparti(Ospedale& osp) {
                     cout << "Nessun medico assegnato." << endl;
                 }
                 
-                // Stampa elenco infermieri
+                //stampa elenco infermieri
                 cout << "\nELENCO INFERMIERI:" << endl;
                 cout << "----------------------------------------" << endl;
                 auto infermieriOsp = osp.getInfermieri();
@@ -787,16 +785,16 @@ void visualizzaReparti(Ospedale& osp) {
     cout << "         REPARTO: " << nomeReparto << endl;
     cout << "========================================" << endl;
     
-    // Stampa singolo reparto
+    //stampa singolo reparto
     auto repartiMap = osp.getReparti();
     auto it = repartiMap.find(nomeReparto);
     if (it != repartiMap.end() && !it->second.empty()) {
         shared_ptr<Reparto> rep = it->second[0];
         
-        // 1. Stampa nome reparto
+        //stampa nome del reparto
         rep->stampaNome();
         
-        // 2. Conta e stampa staff
+        //conta e stampa medici
         int countMedici = 0;
         auto mediciOsp = osp.getMedici();
         for (auto m : mediciOsp) {
@@ -805,6 +803,7 @@ void visualizzaReparti(Ospedale& osp) {
             }
         }
         
+        //conta e stampa infermieri
         int countInfermieri = 0;
         auto infermieriOsp = osp.getInfermieri();
         for (auto infermiere : infermieriOsp) {
@@ -813,17 +812,16 @@ void visualizzaReparti(Ospedale& osp) {
             }
         }
         
-        cout << "[Staff medico: " << countMedici << " medici] | "
-             << "[Staff infermieri: " << countInfermieri << " infermieri]" << endl;
+        cout << "[Staff medico: " << countMedici << " medici] | "<< "[Staff infermieri: " << countInfermieri << " infermieri]" << endl;
         
-        // 3. Stampa dettagli letti e stanze
+        //stampa dettagli letti e stanze
         rep->stampaLetti();
         
     } else {
         cout << "Reparto non trovato!" << endl;
     }
     
-    // Stampa elenco medici
+    //stampa elenco medici
     cout << "\nELENCO MEDICI:" << endl;
     cout << "----------------------------------------" << endl;
     auto mediciOsp = osp.getMedici();
@@ -839,7 +837,7 @@ void visualizzaReparti(Ospedale& osp) {
         cout << "Nessun medico assegnato." << endl;
     }
     
-    // Stampa elenco infermieri
+    //atampa elenco infermieri
     cout << "\nELENCO INFERMIERI:" << endl;
     cout << "----------------------------------------" << endl;
     auto infermieriOsp = osp.getInfermieri();
