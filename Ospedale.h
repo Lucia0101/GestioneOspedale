@@ -6,14 +6,13 @@
 #include <map>
 #include <list>
 
-
 #include "Reparto.h"
 #include "Operazione.h"
 #include "Medico.h"
 #include "Infermiere.h"
 #include "Paziente.h"
 using namespace std;
- 
+
 int dataToIn(string data);
 
 class Ospedale{
@@ -26,8 +25,6 @@ class Ospedale{
 	    vector<Medico*> medici;
 	    vector<Infermiere*> infermieri;
 	    list<Paziente*> pazienti; 
-	    
-	  
 	    
 	public:
 		Ospedale();
@@ -56,8 +53,10 @@ class Ospedale{
 	    Paziente& findCFpaziente(const string& cf);
 	   
 	    void stampaPazientiFiltrati() const; 
-	    void stampaPazientiProgrammati() const;
-	    void stampaPazientiDimessi() const;
+	    
+	    // Aggiunte queste due funzioni che restituiscono liste di pazienti filtrati
+	    list<Paziente*> getPazientiProgrammati() const;
+	    list<Paziente*> getPazientiDimessi() const;
 	    
 	    Medico* findMedicoByID(const string& id);
 	    const map<string, vector<shared_ptr<Reparto>>>& getReparti() const { return reparti; }

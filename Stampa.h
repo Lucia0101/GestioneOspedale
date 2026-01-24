@@ -32,7 +32,7 @@ void stampaPerCognome(const Contenitore& container,const string& titolo) {
 
 //specializzazione per list<Paziente*> perché uso list (sort è diverso in list)
 template<>
-void stampaPerCognome<list<Paziente*>>(const list<Paziente*>& container,const string& titolo) {
+void inline stampaPerCognome<list<Paziente*>>(const list<Paziente*>& container,const string& titolo) {
     //crea una copia ordinabile
     list<Paziente*> copiaOrdinata=container;
     

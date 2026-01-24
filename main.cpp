@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <limits>
-
 #include <thread>
 #include <chrono>
 #include <mutex>
@@ -15,49 +14,47 @@
 #include "Paziente.h"
 #include "Medico.h"
 #include "Infermiere.h"
-
+#include "Stampa.h"
 using namespace std;
 
-// Dichiarazioni delle funzioni
 void caricaMedici(Ospedale& osp, const string& filename);
 void caricaInfermieri(Ospedale& osp, const string& filename);
 void caricaPazienti(Ospedale& osp, const string& filename);
 void caricaOperazioni(Ospedale& osp, const string& filename);
 void simulaOperazioni(Ospedale& osp);
+void simulaThreadOperazioni(Ospedale& osp);
 
-// Funzioni del menu
+//funzioni del menu
 void menu(Ospedale& osp);
 void visualizzaMedici(Ospedale& osp);
 void visualizzaInfermieri(Ospedale& osp);
 void visualizzaPazienti(Ospedale& osp);
 void reportGiornaliero(Ospedale& osp);
-void pazientiProgrammati(Ospedale& osp);
+void pazientiProgrammati(Ospedale& osp); 
 void pazientiDimessi(Ospedale& osp);
 void visualizzaReparti(Ospedale& osp);
 void ricercaModificaPaziente(Ospedale& osp);
 void stampaSituazioneOspedale(Ospedale& osp);
 
-void simulaThreadOperazioni(Ospedale& osp);
 
 int main(int argc, char** argv) {
-    Ospedale osp("*PRAVA*");
+    Ospedale osp("*OSPEDALE PROGRAMMAZIONE AVANZATA*");
 
     try{
         cout<<"--- CARICAMENTO DATI ---"<<endl;
-        caricaMedici(osp, "medici.txt");
+        caricaMedici(osp,"medici.txt");
         cout<<"Medici caricati."<<endl;
         
-        caricaInfermieri(osp, "infermieri.txt");
+        caricaInfermieri(osp,"infermieri.txt");
         cout<<"Infermieri caricati."<<endl;
         
-        caricaPazienti(osp, "pazienti.txt");
+        caricaPazienti(osp,"pazienti.txt");
         cout<<"Pazienti caricati e ricoverati."<<endl;
         
-        caricaOperazioni(osp, "operazioni.txt");
+        caricaOperazioni(osp,"operazioni.txt");
         cout<<"Operazioni caricate."<<endl;
 
-        // Simulazione Operazioni (collega i dati caricati)
-        //simulaOperazioni(osp);  //se non si toglie conta 2 operazioni in più, quelle simulate
+        simulaOperazioni(osp);  //se non si toglie conta 2 operazioni in più, quelle simulate PROBLEMAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         cout<<"Operazioni simulate."<<endl;
 
     }catch(const exception& e){
@@ -65,8 +62,8 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Avvio il menu interattivo
-    menu(osp);
+	//avvio del menu
+    menu(osp); 
 
     return 0;
 }
@@ -75,21 +72,22 @@ int main(int argc, char** argv) {
 void simulaThreadOperazioni(Ospedale& osp) {
     cout << "\n=== SIMULAZIONE THREAD: OPERAZIONI SIMULTANEE ===" << endl;
     
-    static mutex mtx; // Per sincronizzare l'output
+    //per sincronizzare l'output
+    static mutex mtx; 
     
-    // Funzione per stampare con mutex
+    //funzione per stampare con mutex
     auto stampaSicura = [&mtx](const string& msg) {
         lock_guard<mutex> lock(mtx);
         cout << msg << endl;
     };
     
-    // Prima operazione (simulata)
+    //prima operazione simulata
     auto operazioneCardio = [&osp, &stampaSicura]() {
         stampaSicura("[THREAD 1] Inizio bypass cardiaco in Cardiochirurgia");
-        this_thread::sleep_for(chrono::seconds(3)); // Simula durata
+        this_thread::sleep_for(chrono::seconds(3)); 
         stampaSicura("[THREAD 1] Bypass cardiaco completato con successo!");
         
-        // Aggiungi operazione al registro
+        //aggiungi l'operazione al registro
         try {
             Operazione op(getDataAttuale(), "MSSSIGN123", 
                          "Bypass cardiaco (simulato)",
@@ -100,13 +98,13 @@ void simulaThreadOperazioni(Ospedale& osp) {
         }
     };
     
-    // Seconda operazione (simulata)
+    //seconda operazione simulata
     auto operazioneOrtopedia = [&osp, &stampaSicura]() {
         stampaSicura("[THREAD 2] Inizio riduzione frattura in Ortopedia");
-        this_thread::sleep_for(chrono::seconds(2)); // Durata più breve
+        this_thread::sleep_for(chrono::seconds(2)); 
         stampaSicura("[THREAD 2] Frattura ridotta con successo!");
         
-        // Aggiungi operazione al registro
+        //aggiungi operazione al registro
         try {
             Operazione op(getDataAttuale(), "MARFERR123", 
                          "Riduzione frattura scomposta (simulato)", 
@@ -558,38 +556,78 @@ void reportGiornaliero(Ospedale& osp) {
 }
 
 void pazientiProgrammati(Ospedale& osp){
-	system("cls");
-	osp.stampaPazientiProgrammati();
-	cout << "\n========================================" << endl;
-	
-	char scelta;
-    cout<<endl;
-    cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
-    cin >> scelta;
-    cin.ignore();
+    system("cls");
     
-    if (scelta == 'S' || scelta == 's') {
-        ricercaModificaPaziente(osp);
+    cout << endl;
+    cout << "===============================================" << endl;
+    cout << "          LISTA PAZIENTI PROGRAMMATI" << endl;
+    cout << "===============================================" << endl;
+    
+    // Ottieni la lista dei pazienti programmati
+    list<Paziente*> pazientiProg = osp.getPazientiProgrammati();
+    
+    // Usa il template per stampare in ordine di cognome
+    if (pazientiProg.empty()) {
+        cout << "Nessun paziente programmato." << endl;
+    } else {
+        // Chiama esplicitamente la specializzazione per list<Paziente*>
+        stampaPerCognome<list<Paziente*>>(pazientiProg, "");
     }
-	
+    
+    cout << "\n========================================" << endl;
+    
+    // Ricerca paziente se ci sono pazienti
+    if (!pazientiProg.empty()) {
+        char scelta;
+        cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
+        cin >> scelta;
+        cin.ignore();
+        
+        if (scelta == 'S' || scelta == 's') {
+            ricercaModificaPaziente(osp);
+        }
+    }
+    
+    cout << endl; // A capo prima del "premi un tasto"
+    cout << "========================================" << endl;
     system("pause");
 }
 
 void pazientiDimessi(Ospedale& osp){
-	system("cls");
-	osp.stampaPazientiDimessi();
-	cout << "\n========================================" << endl;
-	
-	char scelta;
-    cout<<endl;
-    cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
-    cin >> scelta;
-    cin.ignore();
+    system("cls");
     
-    if (scelta == 'S' || scelta == 's') {
-        ricercaModificaPaziente(osp);
+    cout << endl;
+    cout << "===============================================" << endl;
+    cout << "          LISTA PAZIENTI DIMESSI" << endl;
+    cout << "===============================================" << endl;
+    
+    // Ottieni la lista dei pazienti dimessi
+    list<Paziente*> pazientiDim = osp.getPazientiDimessi();
+    
+    // Usa il template per stampare in ordine di cognome
+    if (pazientiDim.empty()) {
+        cout << "Nessun paziente dimesso (storico)." << endl;
+    } else {
+        // Chiama esplicitamente la specializzazione per list<Paziente*>
+        stampaPerCognome<list<Paziente*>>(pazientiDim, "");
     }
-	
+    
+    cout << "\n========================================" << endl;
+    
+    // Ricerca paziente se ci sono pazienti
+    if (!pazientiDim.empty()) {
+        char scelta;
+        cout << "Vuoi ricercare un paziente per codice fiscale? (S/N): ";
+        cin >> scelta;
+        cin.ignore();
+        
+        if (scelta == 'S' || scelta == 's') {
+            ricercaModificaPaziente(osp);
+        }
+    }
+    
+    cout << endl; // A capo prima del "premi un tasto"
+    cout << "========================================" << endl;
     system("pause");
 }
 
@@ -798,5 +836,3 @@ void visualizzaReparti(Ospedale& osp) {
     cout << "\n========================================" << endl;
     system("pause");
 }
-
-
