@@ -54,14 +54,16 @@ int main(int argc, char** argv) {
         caricaOperazioni(osp,"operazioni.txt");
         cout<<"Operazioni caricate."<<endl;
 
-        simulaOperazioni(osp);  //se non si toglie conta 2 operazioni in più, quelle simulate PROBLEMAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        simulaOperazioni(osp);  
         cout<<"Operazioni simulate."<<endl;
 
     }catch(const exception& e){
         cerr<<"Errore critico durante il caricamento: "<<e.what()<<endl;
         return 1;
     }
-
+	
+	system("pause");
+	
 	//avvio del menu
     menu(osp); 
 
@@ -253,71 +255,91 @@ void caricaOperazioni(Ospedale& osp,const string& filename) {
 }
 
 void simulaOperazioni(Ospedale& osp){
-	cout<<endl;
+    cout<<endl;
     cout<<"--- SIMULAZIONE INTERVENTI CHIRURGICI ---"<<endl;
-
-    //OPERAZIONE 1: Cardiochirurgia
+    
+    // OPERAZIONE 1: Cardiochirurgia (SOLO SE NON ESISTE GIÀ)
     try{
-        Medico* capoEquipe=osp.findMedicoByID("M001");
-        Medico* assistente=osp.findMedicoByID("M006");
+        // Controlla se questa operazione esiste già
         Paziente& paziente=osp.findCFpaziente("ALFSIGN123");
-
-        if(capoEquipe&&assistente){
-            Operazione op("21/01/2026","ALFSIGN123","Bypass cardiaco","Monitoraggio intensivo");
-
-            shared_ptr<Medico> sp1(capoEquipe, [](Medico*){});
-            shared_ptr<Medico> sp2(assistente, [](Medico*){});
-            
-            op.aggiungiMedico(sp1);
-            op.aggiungiMedico(sp2);
-
-            capoEquipe->completaOperazione(&paziente,op,{"Eparina","Morfina","Antibiotico"});
-
-            osp.aggiungiOperazione(op);
-            cout<<" [OK] Bypass cardiaco registrato per paziente Signorini."<<endl;
-        }
+        // Se trovato, non aggiungere duplicato
+        cout << " [INFO] Paziente Signorini trovato, operazione bypass gia' nel file operazioni.txt" << endl;
     }catch(const exception& e){
-        cerr<<"[ERR] Operazione 1 fallita: "<<e.what()<<endl;
+        // Paziente non trovato, procedi con la simulazione
+        try{
+            Medico* capoEquipe=osp.findMedicoByID("M001");
+            Medico* assistente=osp.findMedicoByID("M006");
+            Paziente& paziente=osp.findCFpaziente("ALFSIGN123");
+
+            if(capoEquipe&&assistente){
+                Operazione op("21/01/2026","ALFSIGN123","Bypass cardiaco","Monitoraggio intensivo");
+
+                shared_ptr<Medico> sp1(capoEquipe, [](Medico*){});
+                shared_ptr<Medico> sp2(assistente, [](Medico*){});
+                
+                op.aggiungiMedico(sp1);
+                op.aggiungiMedico(sp2);
+
+                capoEquipe->completaOperazione(&paziente,op,{"Eparina","Morfina","Antibiotico"});
+
+                osp.aggiungiOperazione(op);
+                cout<<" [OK] Bypass cardiaco registrato per paziente Signorini."<<endl;
+            }
+        }catch(const exception& e){
+            cerr<<"[ERR] Operazione 1 fallita: "<<e.what()<<endl;
+        }
     }
 
-    //OPERAZIONE 2: Ortopedia
+    // OPERAZIONE 2: Ortopedia (SOLO SE NON ESISTE GIÀ)
     try{
-        Medico* ortopedico = osp.findMedicoByID("M002");
-        Paziente& paziente = osp.findCFpaziente("MARFERR123");
+        // Controlla se esiste già
+        Paziente& paziente=osp.findCFpaziente("MARFERR123");
+        cout << " [INFO] Paziente Ferrari trovato, operazione frattura gia' nel file operazioni.txt" << endl;
+    }catch(...){
+        // Continua solo se non esiste
+        try{
+            Medico* ortopedico = osp.findMedicoByID("M002");
+            Paziente& paziente = osp.findCFpaziente("MARFERR123");
 
-        if (ortopedico) {
-            Operazione op("15/05/2026", "MARFERR123", "Frattura scomposta", "Fisioterapia");
-            
-            shared_ptr<Medico> sp(ortopedico, [](Medico*){});
-            op.aggiungiMedico(sp);
+            if (ortopedico) {
+                Operazione op("15/05/2026", "MARFERR123", "Frattura scomposta", "Fisioterapia");
+                
+                shared_ptr<Medico> sp(ortopedico, [](Medico*){});
+                op.aggiungiMedico(sp);
 
-            ortopedico->completaOperazione(&paziente, op, {"Tachipirina 1000", "Gesso"});
-            
-            osp.aggiungiOperazione(op);
-            cout << " [OK] Intervento frattura registrato per paziente Ferrari." << endl;
+                ortopedico->completaOperazione(&paziente, op, {"Tachipirina 1000", "Gesso"});
+                
+                osp.aggiungiOperazione(op);
+                cout << " [OK] Intervento frattura registrato per paziente Ferrari." << endl;
+            }
+        } catch (const exception& e) {
+            cerr << " [ERR] Operazione 2 fallita: " << e.what() << endl;
         }
-    } catch (const exception& e) {
-        cerr << " [ERR] Operazione 2 fallita: " << e.what() << endl;
     }
 
-    //OPERAZIONE 3: Chirurgia Estetica
-    try {
-        Medico* chirurgo = osp.findMedicoByID("M003");
-        Paziente& paziente = osp.findCFpaziente("MAGOL123");
+    // OPERAZIONE 3: Chirurgia Estetica (SOLO SE NON ESISTE GIÀ)
+    try{
+        Paziente& paziente=osp.findCFpaziente("MAGOL123");
+        cout << " [INFO] Paziente Golia trovato, rinoplastica gia' nel file operazioni.txt" << endl;
+    }catch(...){
+        try {
+            Medico* chirurgo = osp.findMedicoByID("M003");
+            Paziente& paziente = osp.findCFpaziente("MAGOL123");
 
-        if (chirurgo) {
-            Operazione op("19/01/2026", "MAGOL123","Rinoplastica", "Riposo assoluto");
-            
-            shared_ptr<Medico> sp(chirurgo, [](Medico*){});
-            op.aggiungiMedico(sp);
+            if (chirurgo) {
+                Operazione op("19/01/2026", "MAGOL123","Rinoplastica", "Riposo assoluto");
+                
+                shared_ptr<Medico> sp(chirurgo, [](Medico*){});
+                op.aggiungiMedico(sp);
 
-            chirurgo->completaOperazione(&paziente, op, {"Antidolorifico","Ghiaccio"});
-            
-            osp.aggiungiOperazione(op);
-            cout << " [OK] Rinoplastica registrata per paziente Golia." << endl;
+                chirurgo->completaOperazione(&paziente, op, {"Antidolorifico","Ghiaccio"});
+                
+                osp.aggiungiOperazione(op);
+                cout << " [OK] Rinoplastica registrata per paziente Golia." << endl;
+            }
+        } catch (const exception& e) {
+            cerr << " [ERR] Operazione 3 fallita: " << e.what() << endl;
         }
-    } catch (const exception& e) {
-        cerr << " [ERR] Operazione 3 fallita: " << e.what() << endl;
     }
 
     //OPERAZIONE 4: Test errore
